@@ -5,9 +5,17 @@
 
 settings
 
-files = dir([global_path '*.set'])
+files = dir([inputFilePath '*.set'])
 
-saveLoc = input('Enter full path of save location (folder): ')
+saveLoc = input('Enter full path of save location (folder with trailing "/"): ')
+
+cd(inputFilePath)
 
 for x = 1:length(files)
 
+	eegData = pop_loadset(files(x).name, '.')
+	save([saveLoc files(x).name(1:end-4)], eegData)
+	clear eegData
+end
+
+disp('done')

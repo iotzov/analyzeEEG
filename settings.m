@@ -3,4 +3,4 @@
 % -
 % -
 
-global_path = '/home/ivan/Documents/Research\ Docs\ /minConsciousEEG/'
+inputFilePath = '/home/ivan/Documents/Research\ Docs\ /minConsciousEEG/'
