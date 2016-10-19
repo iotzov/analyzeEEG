@@ -3,7 +3,7 @@
 % -
 % -
 
-settings
+scriptSettings
 
 files = dir([inputFilePath '*.set'])
 
