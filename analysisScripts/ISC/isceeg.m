@@ -86,26 +86,28 @@ Nsec  = 5;  % time-window (in seconds) over which to compute time-reposeved ISC
 Ncomp = 3;  % number of components to dispaly (all D are computed)
     
 % If you have no data, use ours for demo. 
-if nargin<1, datafile = 'EEGVolume.mat'; disp('Using demo data from Cohen et al.'); end 
-
-if exist(datafile) 
-    load(datafile,'X','fs','eogchannels','badchannels');  
-else
-    warning('Can not find data file. Using random data.') 
-    fs=256;                 % *** Samling rate needed for filtering
-    X=randn(30*fs,64,15);   % *** EEG volume, recommend T>100000, D>16, N>10 
-    badchannels=cell(15,1); % *** List of bad channels (one vector of indice per subject).
-    eogchannels=[];         % *** Index of EOG channels, if any; will regress them out and exclude
-end; 
+%*if nargin<1, datafile = 'EEGVolume.mat'; disp('Using demo data from Cohen et al.'); end 
+%
+%if exist(datafile) 
+%    load(datafile,'X','fs','eogchannels','badchannels');  
+%else
+%    warning('Can not find data file. Using random data.') 
+%    fs=256;                 % *** Samling rate needed for filtering
+%   X=randn(30*fs,64,15);   % *** EEG volume, recommend T>100000, D>16, N>10 
+%   badchannels=cell(15,1); % *** List of bad channels (one vector of indice per subject).
+%   eogchannels=[];         % *** Index of EOG channels, if any; will regress them out and exclude
+%end; 
 
 % T samples, D channels, N subjects
+X = datafile;
+fs = 250;
 [T,D,N] = size(X);  
 
 % standard eeg preprocessing (see function below) 
-X = preprocess(X,eogchannels,badchannels,fs);
+%X = preprocess(X,eogchannels,badchannels,fs);
 
 % discard the eog channels; we already used them in preprocess
-X = X(:,setdiff(1:D,eogchannels),:); D=size(X,2);
+%X = X(:,setdiff(1:D,eogchannels),:); D=size(X,2);
 
 % now start the ISC code proper
 
