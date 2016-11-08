@@ -5,8 +5,8 @@ settings_local
 
 files = dir([PROCESSED_DATA_PATH '*.mat']);
 
-allDataFwd = zeros(37040, 37, 92);
-allDataBwd = zeros(37040, 37, 92);
+allDataFwd = zeros(37040, 37, length(files));
+allDataBwd = zeros(37040, 37, length(files));
 
 for i = 1:length(files)
 
