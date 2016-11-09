@@ -25,8 +25,8 @@ for i = 1:length(files)
 
 
 	fs = eegData.srate; % Get sampling rate
-	x = eegData.data(1:37, :)'; % Get all channels except for reference channels and transpose
-	eegData.data = preprocessEEG(x, 33:37, [], fs);
+	x = eegData.data(1:39, :)'; % Get all channels except for reference channels and transpose
+	eegData.data = preprocessEEG(x, 38:39, [], fs);
 	
 
 	% Update stats
