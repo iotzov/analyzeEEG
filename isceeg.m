@@ -5,7 +5,7 @@ function [ISC,ISC_persubject,ISC_persecond,W,A] = isceeg(datafile)
 % (description closest to the present code is in Cohen et al, 2016).
 %
 % You will need these files to run this code:
-%    topoplot.m    -- EEGlab's popular display function. 
+%    topoplot.m    -- EEGlab's popular display function.
 %    BioSemi64.loc -- BioSemi location file for topoplot
 %    notBoxPlot.m  -- Rob Campbell's scatter plot
 %    EEGVolume.mat -- Samantha Cohen's EEG data with 64 electrodes from 18
@@ -39,7 +39,7 @@ function [ISC,ISC_persubject,ISC_persecond,W,A] = isceeg(datafile)
 % this are marked with +++
 %
 % Code for preprocessing EEG and generating surrogate data may be useful in
-% other applications and has been separated as sub-functions. 
+% other applications and has been separated as sub-functions.
 %
 % Surrogate data can be used to test for statistical significance of ISC
 % values. However, the code is not currently used for this purpose and is
@@ -84,26 +84,26 @@ function [ISC,ISC_persubject,ISC_persecond,W,A] = isceeg(datafile)
 gamma = 0.1; % shrinkage parameter; smaller gamma for less regularization
 Nsec  = 5;  % time-window (in seconds) over which to compute time-reposeved ISC
 Ncomp = 3;  % number of components to dispaly (all D are computed)
-    
-% If you have no data, use ours for demo. 
-%*if nargin<1, datafile = 'EEGVolume.mat'; disp('Using demo data from Cohen et al.'); end 
+
+% If you have no data, use ours for demo.
+%*if nargin<1, datafile = 'EEGVolume.mat'; disp('Using demo data from Cohen et al.'); end
 %
-%if exist(datafile) 
-%    load(datafile,'X','fs','eogchannels','badchannels');  
+%if exist(datafile)
+%    load(datafile,'X','fs','eogchannels','badchannels');
 %else
-%    warning('Can not find data file. Using random data.') 
+%    warning('Can not find data file. Using random data.')
 %    fs=256;                 % *** Samling rate needed for filtering
-%   X=randn(30*fs,64,15);   % *** EEG volume, recommend T>100000, D>16, N>10 
+%   X=randn(30*fs,64,15);   % *** EEG volume, recommend T>100000, D>16, N>10
 %   badchannels=cell(15,1); % *** List of bad channels (one vector of indice per subject).
 %   eogchannels=[];         % *** Index of EOG channels, if any; will regress them out and exclude
-%end; 
+%end;
 
 % T samples, D channels, N subjects
 X = datafile;
 fs = 250;
-[T,D,N] = size(X);  
+[T,D,N] = size(X);
 
-% standard eeg preprocessing (see function below) 
+% standard eeg preprocessing (see function below)
 %X = preprocess(X,eogchannels,badchannels,fs);
 
 % discard the eog channels; we already used them in preprocess
@@ -156,7 +156,7 @@ if ~exist('topoplot') | ~exist('notBoxPlot')
 else
     for i=1:Ncomp
         subplot(2,Ncomp,i);
-        topoplot(A(:,i),'BioSemi64.loc','electrodes','off'); title(['a_' num2str(i)])
+        topoplot(A(:,i),'newChanLocs.loc','electrodes','off'); title(['a_' num2str(i)])
     end
     subplot(2,2,3); notBoxPlot(ISC_persubject(1:Ncomp,:)'); xlabel('Component'); ylabel('ISC'); title('Per subjects');
     subplot(2,2,4); plot(ISC_persecond(1:Ncomp,:)'); xlabel('Time (s)'); ylabel('ISC'); title('Per second');
@@ -174,52 +174,52 @@ function X = preprocess(X,eogchannels,badchannels,fs)
 % All the usual EEG preprocessing, except epoching and epoch rejection as
 % there are not events to epoch with in natural stimuli. duh! Instead, bad
 % data is set = 0 in the continuous stream, which makes sense when
-% computing covariance matrices but maybe not for other purposes. 
+% computing covariance matrices but maybe not for other purposes.
 
-debug = 0;   % turn this on to show data before/after preprocessing. 
+debug = 0;   % turn this on to show data before/after preprocessing.
 stdThresh=4; % samples larger this many STDs will be marked as outliers
 HPcutoff =0.5; % HP filter cut-off frequequency in Hz
 
 % pick your preferred high-pass filter
 [b,a,k]=butter(5,HPcutoff/fs*2,'high'); sos = zp2sos(b,a,k);
 
-[T,D,N]=size(X); 
+[T,D,N]=size(X);
 
 % Preprocess data for all N subjects
 for i=1:N
-    
+
     data = X(:,:,i);
 
     % remove starting offset to avoid filter trancient
     data = data-repmat(data(1,:),T,1);
-    
+
     % show the original data
     if debug, subplot(2,1,1); imagesc((1:T)/fs,1:D,data'); title(['Subject ' num2str(i)]); end
 
     % high-pass filter
-    data = sosfilt(sos,data);          
-    
-    % regress out eye-movements;
-    data = data - data(:,eogchannels) * (data(:,eogchannels)\data); 
+    data = sosfilt(sos,data);
 
-    % detect outliers above stdThresh per channel; 
+    % regress out eye-movements;
+    data = data - data(:,eogchannels) * (data(:,eogchannels)\data);
+
+    % detect outliers above stdThresh per channel;
     data(abs(data)>stdThresh*repmat(std(data),[T 1])) = NaN;
-    
+
     % remove 40ms before and after;
-    h=[1; zeros(round(0.04*fs)-1,1)];    
+    h=[1; zeros(round(0.04*fs)-1,1)];
     data = filter(h,1,flipud(filter(h,1,flipud(data))));
-    
+
     % Mark outliers as 0, to avoid NaN coding and to discount noisy channels
     data(isnan(data))=0;
 
     % also zero out bad channels
-    data(:,badchannels{i})=0; 
-    
+    data(:,badchannels{i})=0;
+
     % show the result of all this
     if debug, subplot(2,1,2); imagesc((1:T)/fs,1:D,data'); caxis([-100 100]); xlabel('Time (s)'); drawnow; end
 
     X(:,:,i) = data;
-    
+
 end
 
 
@@ -242,5 +242,3 @@ for i = 1:N
     tmp = ifft([Xfft(1,:); tmp(2:Tr/2,:); Xfft(Tr/2+1,:); conj(tmp(Tr/2:-1:2,:))]); % resynthsized keeping it real
     Xr(:,:,i) = tmp(1:T,:,:); % grab only the original length
 end
-
-
