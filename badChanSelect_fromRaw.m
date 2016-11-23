@@ -11,9 +11,15 @@ function [badChannels, dataquality] = badChanSelect(inputEEG)
 %
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+fs = 250;
 
+[b,a,k]=butter(5,0.5/fs*2,'high'); sos = zp2sos(b,a,k);
 
-eegSize = size(inputEEG.fwd);
+[T,D]=size(inputEEG.fwd);
+
+inputEEG.fwd = inputEEG.fwd-repmat(inputEEG.fwd(1,:),T,1);  % remove starting offset to avoid filter transient
+
+inputEEG.fwd = sosfilt(sos,inputEEG.fwd);
 
 badChannels = []; removemore=1;
 
