@@ -1,105 +1,13 @@
 function [ISC,ISC_persubject,ISC_persecond,W,A] = isceeg(datafile, healthyIdx, patientIdx)
 %
-% This is matlab code to compute intersubject correlation (ISC) in EEG
-% using correlated component analysis, as described in the references below
-% (description closest to the present code is in Cohen et al, 2016).
-%
-% You will need these files to run this code:
-%    topoplot.m    -- EEGlab's popular display function.
-%    BioSemi64.loc -- BioSemi location file for topoplot
-%    notBoxPlot.m  -- Rob Campbell's scatter plot
-%    EEGVolume.mat -- Samantha Cohen's EEG data with 64 electrodes from 18
-%                     subjects while watching this video:
-%                     https://www.youtube.com/watch?v=DEo-rw2TeAU.
-%
-% A stand-alone version of these files can be found on the same location as
-% this file. Once you have all this the code can be run as:
-%
-% [ISC,ISC_persubject,ISC_persecond,W,A] = isceeg('EEGVolume.mat');
-%
-% To understand the format of the data file take a look at lines maked with
-% ***. You will have to edit these lines if your data is in a different
-% format.
-%
-% The input to this function is EEG data (volumes of samples by channels by
-% subjects). The output are component projection vectors W, scalp
-% projections A, and ISC_persubject and ISC_persecond, i.e. the
-% intersubject correlation computed resolved for each subject, or resolved
-% in time. Components are sorted by how much correlation between subjects
-% they capture. We typically only look at the first few, and often just take
-% the sum of the first 3 ISC. This is not done in this code.
-%
-% Parameters of the algorithm are currently set to reasonable defaults.
-%
-% Curently this is coded assuming a single continuous dynamic stimulus (the
-% example data was recored for a video of 197 seconds duration). In
-% practice I strongly recommend running this by combining data from
-% multiple stimuli to get more robust estimates of the required within- and
-% between-subjects covariances. Comments on how to change the code to do
-% this are marked with +++
-%
-% Code for preprocessing EEG and generating surrogate data may be useful in
-% other applications and has been separated as sub-functions.
-%
-% Surrogate data can be used to test for statistical significance of ISC
-% values. However, the code is not currently used for this purpose and is
-% only provided as example to generate a single surrogate. See ###
-%
-% References:
-%
-% Samantha Cohen, Lucas C Parra, Memorable audiovisual narratives
-% synchronize supramodal neural responses, in review at eNeuro
-%
-% Agustin Petroni, Samantha Cohen, Nicolas Langer, Simon Henin, Tamara
-% Vanderwal, Michael P. Milham, Lucas C. Parra, Children, particularly
-% males, exhibit higher intersubject correlation of neural responses to
-% natural stimuli than adults", in review
-%
-% Jason Ki, Simon Kelly, Lucas C. Parra, "Attention strongly modulates
-% reliability of neural responses to naturalistic narrative stimuli.”
-% Journal of Neuroscience, 36 (10), 3092-3101.
-%
-% Jacek P. Dmochowski, Matthew A. Bezdek, Brian P. Abelson, John S.
-% Johnson, Eric H. Schumacher, Lucas C. Parra, “Audience preferences are
-% predicted by temporal reliability of neural processing”, Nature
-% Communication, 5567, July 2014.
-%
-% Jacek P. Dmochowski, Paul Sajda, Joao Dias, Lucas C. Parra, “Components
-% of ongoing EEG with high correlation point to emotionally-laden attention
-% -- a possible marker of engagement?”, Frontiers in Human Neuroscience,
-% 6:112, April 2012.
-
-% (c) Lucas C Parra, parra@ccny.cuny.edu
-%
-% Revision history (in case you have an earlier version):
-% 07/15/16. version 0.00: incomplete; got to start somewhere.
-% 07/19/16. version 0.01: complete; some bugs in formulas removed.
-% 07/21/16. version 0.02: cleaned up HP filter
-% 08/02/16. version 0.03: removed filter bug in ourlier detection.
-%                         added sample code to generate surrogate data
-% 08/03/16. version 0.04: added sample data, organized into function calls
-% 08/05/16. version 0.05: fixed bug in pooling over subjects, added some displays
 
 % some ISC processing parameters
 gamma = 0.1; % shrinkage parameter; smaller gamma for less regularization
 Nsec  = 5;  % time-window (in seconds) over which to compute time-reposeved ISC
 Ncomp = 3;  % number of components to dispaly (all D are computed)
 
-% If you have no data, use ours for demo.
-%*if nargin<1, datafile = 'EEGVolume.mat'; disp('Using demo data from Cohen et al.'); end
-%
-%if exist(datafile)
-%    load(datafile,'X','fs','eogchannels','badchannels');
-%else
-%    warning('Can not find data file. Using random data.')
-%    fs=256;                 % *** Samling rate needed for filtering
-%   X=randn(30*fs,64,15);   % *** EEG volume, recommend T>100000, D>16, N>10
-%   badchannels=cell(15,1); % *** List of bad channels (one vector of indice per subject).
-%   eogchannels=[];         % *** Index of EOG channels, if any; will regress them out and exclude
-%end;
-
 % T samples, D channels, N subjects
-X = structToVolume(datafile, 1:92);
+X = datafile;
 fs = 250;
 [T,D,N] = size(X);
 
@@ -136,18 +44,9 @@ A=Rw*W*inv(W'*Rw*W);
 
 % Compute ISC resolved by subject, see Cohen et al.
 for i=1:N
-  if(any(i==healthyIdx))
     Rw=0; for j=healthyIdx, if i~=j, Rw = Rw+(Rij(:,:,i,i)+Rij(:,:,j,j)); end; end
     Rb=0; for j=healthyIdx, if i~=j, Rb = Rb+(Rij(:,:,i,j)+Rij(:,:,j,i)); end; end
     ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
-  else
-    Rw=0; for j=patientIdx, Rw = Rw+(Rij(:,:,i,i)+Rij(:,:,j,j)); end;
-    Rb=0; for j=patientIdx, Rb = Rb+(Rij(:,:,i,j)+Rij(:,:,j,i)); end;
-    ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
-    %Rw=0; for j=1:N, if i~=j, Rw = Rw+1/(N-1)*(Rij(:,:,i,i)+Rij(:,:,j,j)); end; end
-    %Rb=0; for j=1:N, if i~=j, Rb = Rb+1/(N-1)*(Rij(:,:,i,j)+Rij(:,:,j,i)); end; end
-    %ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
-  end
 end
 
 % Compute ISC resolved in time
@@ -167,32 +66,26 @@ else
         subplot(2,Ncomp,i);
         topoplot(A(:,i),'newChanLocs.loc','electrodes','off'); title(['a_' num2str(i)])
     end
-    subplot(2,2,3); notBoxPlot(ISC_persubject(1:Ncomp,healthyIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Healthy');
-    subplot(2,2,4); notBoxPlot(ISC_persubject(1:Ncomp,patientIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Patient');
+    subplot(2,2,3); notBoxPlot(ISC_persubject(1:Ncomp,healthyIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Healthy'); ylim([-.01 0.1]);
+    subplot(2,2,4); notBoxPlot(ISC_persubject(1:Ncomp,patientIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Patient'); ylim([-.01 0.1]);
     %subplot(2,2,4); plot(ISC_persecond(1:Ncomp,:)'); xlabel('Time (s)'); ylabel('ISC'); title('Per second');
 end
+%{for i=1:N
+  if(any(i==healthyIdx))
+    Rw=0; for j=healthyIdx, if i~=j, Rw = Rw+(Rij(:,:,i,i)+Rij(:,:,j,j)); end; end
+    Rb=0; for j=healthyIdx, if i~=j, Rb = Rb+(Rij(:,:,i,j)+Rij(:,:,j,i)); end; end
+    ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
+  else
+    Rw=0; for j=patientIdx, Rw = Rw+(Rij(:,:,i,i)+Rij(:,:,j,j)); end;
+    Rb=0; for j=patientIdx, Rb = Rb+(Rij(:,:,i,j)+Rij(:,:,j,i)); end;
+    ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
+    %Rw=0; for j=1:N, if i~=j, Rw = Rw+1/(N-1)*(Rij(:,:,i,i)+Rij(:,:,j,j)); end; end
+    %Rb=0; for j=1:N, if i~=j, Rb = Rb+1/(N-1)*(Rij(:,:,i,j)+Rij(:,:,j,i)); end; end
+    %ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
+  end
+end
+%}
+
 
 % ### Run all the code above with phase-randomized Xr to get chance values
 % of ISC measures under the null hypothesis of no ISC.
-Xr = phaserandomized(X);
-
-
-% -------------------------------------------------------------------------
-function Xr = phaserandomized(X);
-% Generate phase randomized surrogate data Xr that preserves spatial and
-% temporal correlation in X, following Theiler J, Eubank S, Longtin A,
-% Galdrikian B, Doyne Farmer J (1992) Testing for nonlinearity in time
-% series: the method of surrogate data. Phys Nonlinear Phenom 58:77-94.
-
-[T,D,N] = size(X);
-
-Tr = round(T/2)*2; % this code only works if T is even; make it so
-for i = 1:N
-    Xfft = fft(X(:,:,i),Tr); % will add a zero at the end if uneven length
-    Amp = abs  (Xfft(1:Tr/2+1,:)); % original amplitude
-    Phi = angle(Xfft(1:Tr/2+1,:)); % orignal phase
-    Phir = 4*acos(0)*rand(Tr/2-1,1)-2*acos(0); % random phase to add
-    tmp(2:Tr/2,:) = Amp(2:Tr/2,:).*exp(sqrt(-1)*(Phi(2:Tr/2,:)+repmat(Phir,1,D))); % Theiler's magic
-    tmp = ifft([Xfft(1,:); tmp(2:Tr/2,:); Xfft(Tr/2+1,:); conj(tmp(Tr/2:-1:2,:))]); % resynthsized keeping it real
-    Xr(:,:,i) = tmp(1:T,:,:); % grab only the original length
-end
