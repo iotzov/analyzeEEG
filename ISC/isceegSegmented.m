@@ -1,4 +1,4 @@
-function [ISC,ISC_persubject,ISC_persecond,W,A] = isceeg(datafile)
+function [ISC,ISC_persubject,ISC_persecond,W,A] = isceeg(datafile, healthyIdx, patientIdx)
 %
 % This is matlab code to compute intersubject correlation (ISC) in EEG
 % using correlated component analysis, as described in the references below
@@ -136,15 +136,17 @@ A=Rw*W*inv(W'*Rw*W);
 
 % Compute ISC resolved by subject, see Cohen et al.
 for i=1:N
-  if(datafile(i).healthy==1)
-    Rw=0; for j=getDesiredIndices(datafile, 1, 'Run1', [], ''), if i~=j, Rw = Rw+(Rij(:,:,i,i)+Rij(:,:,j,j)); end; end
-    Rb=0; for j=getDesiredIndices(datafile, 1, 'Run1', [], ''), if i~=j, Rb = Rb+(Rij(:,:,i,j)+Rij(:,:,j,i)); end; end
+  if(any(i==healthyIdx))
+    Rw=0; for j=healthyIdx, if i~=j, Rw = Rw+(Rij(:,:,i,i)+Rij(:,:,j,j)); end; end
+    Rb=0; for j=healthyIdx, if i~=j, Rb = Rb+(Rij(:,:,i,j)+Rij(:,:,j,i)); end; end
     ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
   else
+    Rw=0; for j=patientIdx, Rw = Rw+(Rij(:,:,i,i)+Rij(:,:,j,j)); end;
+    Rb=0; for j=patientIdx, Rb = Rb+(Rij(:,:,i,j)+Rij(:,:,j,i)); end;
+    ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
     %Rw=0; for j=1:N, if i~=j, Rw = Rw+1/(N-1)*(Rij(:,:,i,i)+Rij(:,:,j,j)); end; end
     %Rb=0; for j=1:N, if i~=j, Rb = Rb+1/(N-1)*(Rij(:,:,i,j)+Rij(:,:,j,i)); end; end
     %ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
-    ISC_persubject(:,i) = 0;
   end
 end
 

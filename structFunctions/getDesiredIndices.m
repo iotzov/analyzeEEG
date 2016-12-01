@@ -1,5 +1,5 @@
 function [desiredIndices] = getDesiredIndices(inputData, healthy, run, quality, subject)
-% 
+%
 % This function returns the indices out of the 92 available sessions of the ones matching the passed criteria
 %
 % function [desiredIndices] = getDesiredIndices(inputData, healthy, run, quality, subject)
@@ -10,7 +10,7 @@ function [desiredIndices] = getDesiredIndices(inputData, healthy, run, quality, 
 % 		run       - string matching the desired run #
 % 		quality   - (0, 1, or 2) depending on quality of desired data
 % 		subject   - string containing name of desired subject
-% 		
+%
 % 		**** 		ANY EMPTY PARAMETERS WILL BE INTERPRETED AS WILDCARDS 		****
 % Output:
 % 		desiredIndices - vector of indices of data matching passed criteria
