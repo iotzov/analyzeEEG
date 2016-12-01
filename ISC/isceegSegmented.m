@@ -167,7 +167,8 @@ else
         subplot(2,Ncomp,i);
         topoplot(A(:,i),'newChanLocs.loc','electrodes','off'); title(['a_' num2str(i)])
     end
-    subplot(2,2,[3,4]); notBoxPlot(ISC_persubject(1:Ncomp,getDesiredIndices(datafile, 1, 'Run1', [], ''))'); xlabel('Component'); ylabel('ISC'); title('Per subjects');
+    subplot(2,2,3); notBoxPlot(ISC_persubject(1:Ncomp,healthyIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Healthy');
+    subplot(2,2,4); notBoxPlot(ISC_persubject(1:Ncomp,patientIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Patient');
     %subplot(2,2,4); plot(ISC_persecond(1:Ncomp,:)'); xlabel('Time (s)'); ylabel('ISC'); title('Per second');
 end
 
