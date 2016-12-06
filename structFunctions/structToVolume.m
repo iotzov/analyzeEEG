@@ -7,7 +7,7 @@ function [eegVol] = structToVolume(inputStruct, desired)
 
 	eegVol = inputStruct(desired(1)).fwd;
 
-	for i = 2:length(desired)
+	for i = desired
 
 		eegVol = cat(3, eegVol, inputStruct(i).fwd);
 	end

@@ -141,7 +141,7 @@ for i=1:N
     ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
 end
 
-% Compute ISC resolved in time
+%{ Compute ISC resolved in time
 for t = 1:floor((T-Nsec*fs)/fs)
     Xt = X((1:Nsec*fs)+(t-1)*fs,:,:);
     Rij = permute(reshape(cov(Xt(:,:)),[D N  D N]),[1 3 2 4]);
@@ -149,17 +149,17 @@ for t = 1:floor((T-Nsec*fs)/fs)
     Rb = 1/(N-1)/N*(sum(Rij(:,:,:),3) - N*Rw);  % pooled over all pairs of subjects
     ISC_persecond(:,t) = diag(W'*Rb*W)./diag(W'*Rw*W);
 end
-
+%}
 % show some results
 if ~exist('topoplot') | ~exist('notBoxPlot')
     warning('Get display functions topoplot, notBoxPlot where you found this file or on the web');
 else
     for i=1:Ncomp
         subplot(2,Ncomp,i);
-        topoplot(A(:,i),'newChanLocs.loc','electrodes','off'); title(['a_' num2str(i)])
+        topoplot(A(:,i),'test.loc','electrodes','off'); title(['a_' num2str(i)])
     end
-    subplot(2,2,3); notBoxPlot(ISC_persubject(1:Ncomp,:)'); xlabel('Component'); ylabel('ISC'); title('Per subjects');
-    subplot(2,2,4); plot(ISC_persecond(1:Ncomp,:)'); xlabel('Time (s)'); ylabel('ISC'); title('Per second');
+    subplot(2,1,2); notBoxPlot(ISC_persubject(1:Ncomp,:)'); xlabel('Component'); ylabel('ISC'); title('Per subjects');
+    %subplot(2,2,4); plot(ISC_persecond(1:Ncomp,:)'); xlabel('Time (s)'); ylabel('ISC'); title('Per second');
 end
 
 % ### Run all the code above with phase-randomized Xr to get chance values

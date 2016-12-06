@@ -64,10 +64,10 @@ if ~exist('topoplot') | ~exist('notBoxPlot')
 else
     for i=1:Ncomp
         subplot(2,Ncomp,i);
-        topoplot(A(:,i),'newChanLocs.loc','electrodes','off'); title(['a_' num2str(i)])
+        topoplot(A(:,i),'test.loc','electrodes','off'); title(['a_' num2str(i)])
     end
-    subplot(2,2,3); notBoxPlot(ISC_persubject(1:Ncomp,healthyIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Healthy'); ylim([-.01 0.1]);
-    subplot(2,2,4); notBoxPlot(ISC_persubject(1:Ncomp,patientIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Patient'); ylim([-.01 0.1]);
+    subplot(2,2,3); notBoxPlot(ISC_persubject(1:Ncomp,healthyIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Healthy'); ylim([-.01 0.04]);
+    subplot(2,2,4); notBoxPlot(ISC_persubject(1:Ncomp,patientIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Patient'); ylim([-.01 0.04]);
     %subplot(2,2,4); plot(ISC_persecond(1:Ncomp,:)'); xlabel('Time (s)'); ylabel('ISC'); title('Per second');
 end
 %{for i=1:N

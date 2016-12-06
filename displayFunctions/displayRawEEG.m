@@ -12,10 +12,10 @@ function displayRawEEG(eegData, fs)
 
 [b,a,k]=butter(5,0.5/fs*2,'high'); sos = zp2sos(b,a,k);
 
-[T,D]=size(eegData);                                              
+[T,D]=size(eegData);
 
 eegData = eegData-repmat(eegData(1,:),T,1);  % remove starting offset to avoid filter transient
 
 eegData = sosfilt(sos,eegData);
 
-imagesc(eegData'); caxis([-30 30]);
+imagesc(eegData'); caxis([-100 100]);
