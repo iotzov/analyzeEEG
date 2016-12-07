@@ -49,7 +49,7 @@ for i=1:N
     ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
 end
 
-% Compute ISC resolved in time
+%{ Compute ISC resolved in time
 for t = 1:floor((T-Nsec*fs)/fs)
     Xt = X((1:Nsec*fs)+(t-1)*fs,:,:);
     Rij = permute(reshape(cov(Xt(:,:)),[D N  D N]),[1 3 2 4]);
@@ -58,7 +58,7 @@ for t = 1:floor((T-Nsec*fs)/fs)
     ISC_persecond(:,t) = diag(W'*Rb*W)./diag(W'*Rw*W);
 end
 
-%{% show some results
+% show some results
 if ~exist('topoplot') | ~exist('notBoxPlot')
     warning('Get display functions topoplot, notBoxPlot where you found this file or on the web');
 else
