@@ -65,9 +65,9 @@ A=Rw*W*inv(W'*Rw*W);
 
 % Compute ISC resolved by subject, see Cohen et al.
 for i=1:Nf
-    Rw=0; for j=healthyIdx, if i~=j, Rw = Rw+(Rij(:,:,i,i)+Rij(:,:,j,j)); end; end
-    Rb=0; for j=healthyIdx, if i~=j, Rb = Rb+(Rij(:,:,i,j)+Rij(:,:,j,i)); end; end
-    ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
+    Rw_f=0; for j=healthyIdx, if i~=j, Rw_f = Rw_f+(Rij_f(:,:,i,i)+Rij_f(:,:,j,j)); end; end
+    Rb_f=0; for j=healthyIdx, if i~=j, Rb_f = Rb_f+(Rij_f(:,:,i,j)+Rij_f(:,:,j,i)); end; end
+    ISC_persubject_f(:,i) = diag(W'*Rb_f*W)./diag(W'*Rw_f*W);
 end
 
 %{ Compute ISC resolved in time
