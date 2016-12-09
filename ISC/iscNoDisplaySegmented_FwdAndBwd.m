@@ -65,9 +65,16 @@ A=Rw*W*inv(W'*Rw*W);
 
 % Compute ISC resolved by subject, see Cohen et al.
 for i=1:Nf
+
+    % fwd run
     Rw_f=0; for j=healthyIdx, if i~=j, Rw_f = Rw_f+(Rij_f(:,:,i,i)+Rij_f(:,:,j,j)); end; end
     Rb_f=0; for j=healthyIdx, if i~=j, Rb_f = Rb_f+(Rij_f(:,:,i,j)+Rij_f(:,:,j,i)); end; end
     ISC_persubject_f(:,i) = diag(W'*Rb_f*W)./diag(W'*Rw_f*W);
+
+    % bwd run
+    Rw_b=0; for j=healthyIdx, if i~=j, Rw_b = Rw_b+(Rij_b(:,:,i,i)+Rij_b(:,:,j,j)); end; end
+    Rb_b=0; for j=healthyIdx, if i~=j, Rb_b = Rb_b+(Rij_b(:,:,i,j)+Rij_b(:,:,j,i)); end; end
+    ISC_persubject_b(:,i) = diag(W'*Rb_b*W)./diag(W'*Rw_b*W);
 end
 
 %{ Compute ISC resolved in time
@@ -78,7 +85,7 @@ for t = 1:floor((T-Nsec*fs)/fs)
     Rb = 1/(N-1)/N*(sum(Rij(:,:,:),3) - N*Rw);  % pooled over all pairs of subjects
     ISC_persecond(:,t) = diag(W'*Rb*W)./diag(W'*Rw*W);
 end
-%}
+%
 % show some results
 if ~exist('topoplot') | ~exist('notBoxPlot')
     warning('Get display functions topoplot, notBoxPlot where you found this file or on the web');
@@ -91,7 +98,7 @@ else
     subplot(2,2,4); notBoxPlot(ISC_persubject(1:Ncomp,patientIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Patient'); ylim([-.01 0.1]);
     %subplot(2,2,4); plot(ISC_persecond(1:Ncomp,:)'); xlabel('Time (s)'); ylabel('ISC'); title('Per second');
 end
-
+%}
 
 %{for i=1:N
   if(any(i==healthyIdx))
