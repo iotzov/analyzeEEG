@@ -1,4 +1,4 @@
-function [ISC,ISC_persubject,ISC_persecond,W,A] = iscNoDisplay_Segmented(fwddata, bwddata, healthyIdx, patientIdx)
+function [ISC, ISC_persubject_f, ISC_persubject_b, W, A] = iscNoDisplaySegmented_FwdAndBwd(fwddata, bwddata, healthyIdx, patientIdx)
 %
 
 % some ISC processing parameters
@@ -78,44 +78,45 @@ for i=1:Nf
 end
 
 %{ Compute ISC resolved in time
-for t = 1:floor((T-Nsec*fs)/fs)
-    Xt = X((1:Nsec*fs)+(t-1)*fs,:,:);
-    Rij = permute(reshape(cov(Xt(:,:)),[D N  D N]),[1 3 2 4]);
-    Rw =       1/N* sum(Rij(:,:,1:N+1:N*N),3);  % pooled over all subjects
-    Rb = 1/(N-1)/N*(sum(Rij(:,:,:),3) - N*Rw);  % pooled over all pairs of subjects
-    ISC_persecond(:,t) = diag(W'*Rb*W)./diag(W'*Rw*W);
-end
+%for t = 1:floor((T-Nsec*fs)/fs)
+%    Xt = X((1:Nsec*fs)+(t-1)*fs,:,:);
+%    Rij = permute(reshape(cov(Xt(:,:)),[D N  D N]),[1 3 2 4]);
+%    Rw =       1/N* sum(Rij(:,:,1:N+1:N*N),3);  % pooled over all subjects
+%    Rb = 1/(N-1)/N*(sum(Rij(:,:,:),3) - N*Rw);  % pooled over all pairs of subjects
+%    ISC_persecond(:,t) = diag(W'*Rb*W)./diag(W'*Rw*W);
+%end
 %
 % show some results
-if ~exist('topoplot') | ~exist('notBoxPlot')
-    warning('Get display functions topoplot, notBoxPlot where you found this file or on the web');
-else
-    for i=1:Ncomp
-        subplot(2,Ncomp,i);
-        topoplot(A(:,i),'test.loc','electrodes','off'); title(['a_' num2str(i)])
-    end
-    subplot(2,2,3); notBoxPlot(ISC_persubject(1:Ncomp,healthyIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Healthy'); ylim([-.01 0.1]);
-    subplot(2,2,4); notBoxPlot(ISC_persubject(1:Ncomp,patientIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Patient'); ylim([-.01 0.1]);
-    %subplot(2,2,4); plot(ISC_persecond(1:Ncomp,:)'); xlabel('Time (s)'); ylabel('ISC'); title('Per second');
-end
-%}
+%if ~exist('topoplot') | ~exist('notBoxPlot')
+%    warning('Get display functions topoplot, notBoxPlot where you found this file or on the web');
+%else
+%    for i=1:Ncomp
+%        subplot(2,Ncomp,i);
+%        topoplot(A(:,i),'test.loc','electrodes','off'); title(['a_' num2str(i)])
+%    end
+%    subplot(2,2,3); notBoxPlot(ISC_persubject(1:Ncomp,healthyIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Healthy'); ylim([-.01 0.1]);
+%    subplot(2,2,4); notBoxPlot(ISC_persubject(1:Ncomp,patientIdx)'); xlabel('Component'); ylabel('ISC'); title('Per subjects - Patient'); ylim([-.01 0.1]);
+%    %subplot(2,2,4); plot(ISC_persecond(1:Ncomp,:)'); xlabel('Time (s)'); ylabel('ISC'); title('Per second');
+%end
+%%}
 
 %{for i=1:N
-  if(any(i==healthyIdx))
-    Rw=0; for j=healthyIdx, if i~=j, Rw = Rw+(Rij(:,:,i,i)+Rij(:,:,j,j)); end; end
-    Rb=0; for j=healthyIdx, if i~=j, Rb = Rb+(Rij(:,:,i,j)+Rij(:,:,j,i)); end; end
-    ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
-  else
-    Rw=0; for j=patientIdx, Rw = Rw+(Rij(:,:,i,i)+Rij(:,:,j,j)); end;
-    Rb=0; for j=patientIdx, Rb = Rb+(Rij(:,:,i,j)+Rij(:,:,j,i)); end;
-    ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
-    %Rw=0; for j=1:N, if i~=j, Rw = Rw+1/(N-1)*(Rij(:,:,i,i)+Rij(:,:,j,j)); end; end
-    %Rb=0; for j=1:N, if i~=j, Rb = Rb+1/(N-1)*(Rij(:,:,i,j)+Rij(:,:,j,i)); end; end
-    %ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
-  end
-end
-%}
+%  if(any(i==healthyIdx))
+%    Rw=0; for j=healthyIdx, if i~=j, Rw = Rw+(Rij(:,:,i,i)+Rij(:,:,j,j)); end; end
+%    Rb=0; for j=healthyIdx, if i~=j, Rb = Rb+(Rij(:,:,i,j)+Rij(:,:,j,i)); end; end
+%    ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
+%  else
+%    Rw=0; for j=patientIdx, Rw = Rw+(Rij(:,:,i,i)+Rij(:,:,j,j)); end;
+%    Rb=0; for j=patientIdx, Rb = Rb+(Rij(:,:,i,j)+Rij(:,:,j,i)); end;
+%    ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
+%    %Rw=0; for j=1:N, if i~=j, Rw = Rw+1/(N-1)*(Rij(:,:,i,i)+Rij(:,:,j,j)); end; end
+%    %Rb=0; for j=1:N, if i~=j, Rb = Rb+1/(N-1)*(Rij(:,:,i,j)+Rij(:,:,j,i)); end; end
+%    %ISC_persubject(:,i) = diag(W'*Rb*W)./diag(W'*Rw*W);
+%  end
+%end
+%%}
 
 
 % ### Run all the code above with phase-randomized Xr to get chance values
 % of ISC measures under the null hypothesis of no ISC.
+
