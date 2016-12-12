@@ -1,9 +1,25 @@
-function fourWayISC(fwd, bwd, healthyIdx, patientIdx, dataInfo)
+function [resultsF, resultsB] = fourWayISC_runAveraged_LP(fwd, bwd, healthyIdx, patientIdx, dataInfo)
 
   f = figure;
+  resultsB=struct();
+  resultsF=struct();
+
 
   [b_isc, b_iscpersub, b_iscpersec, b_w, b_a] = iscNoDisplay_Segmented(bwd, healthyIdx, patientIdx);
   [isc, iscpersub, iscpersec, w, a] = iscNoDisplay_Segmented(fwd, healthyIdx, patientIdx);
+
+  resultsB.isc = b_isc;
+  resultsB.iscpersub = b_iscpersub;
+  resultsB.iscpersec = b_iscpersec;
+  resultsB.w = b_w;
+  resultsB.a = b_a;
+
+  
+  resultsF.isc = isc;
+  resultsF.iscpersub = iscpersub;
+  resultsF.iscpersec = iscpersec;
+  resultsF.w = w;
+  resultsF.a = a;
 
   subs = [dataInfo.subj];
   averagedfwd = []; averagedbwd=[]; group=[];
@@ -19,8 +35,8 @@ function fourWayISC(fwd, bwd, healthyIdx, patientIdx, dataInfo)
 
   clf
 
-  notBoxPlot([averagedfwd(1:13)',[averagedfwd(14:end) 0]', averagedbwd(1:13)', [averagedbwd(14:end) 0]']); legend;
-  set(gca,'xticklabel',{'Control, Fwd', 'Patient, Fwd', 'Control, Bkw', 'Patient, Bkw'});
+  notBoxPlot([averagedfwd(1:13)', averagedbwd(1:13)', [averagedfwd(14:end) 0]',[averagedbwd(14:end) 0]']); legend;
+  set(gca,'xticklabel',{'Control, Fwd', 'Control, Bkw', 'Patient, Fwd', 'Patient, Bkw'});
   xlabel('Group'); ylabel('ISC'); title('ISC values'); ylim([-.01 .07]);
 
   f2 = figure;

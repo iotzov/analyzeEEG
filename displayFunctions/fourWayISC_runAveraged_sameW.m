@@ -1,9 +1,15 @@
-function fourWayISC_runAveraged_sameW(fwd, bwd, healthyIdx, patientIdx, dataInfo)
+function [results] = fourWayISC_runAveraged_sameW(fwd, bwd, healthyIdx, patientIdx, dataInfo)
 
   f = figure;
 
   %[b_isc, b_iscpersub, b_iscpersec, b_w, b_a] = iscNoDisplaySegmented_FwdAndBwd(bwd, healthyIdx, patientIdx);
   [isc, iscpersub_f, iscpersub_b, w, a] = iscNoDisplaySegmented_FwdAndBwd(fwd, bwd, healthyIdx, patientIdx);
+
+  results.isc = isc;
+  results.iscpersub_f = iscpersub_f;
+  results.iscpersub_b = iscpersub_b;
+  results.w = w;
+  results.a = a;
 
   subs = [dataInfo.subj];
   averagedfwd = []; averagedbwd=[]; group=[];
@@ -19,9 +25,9 @@ function fourWayISC_runAveraged_sameW(fwd, bwd, healthyIdx, patientIdx, dataInfo
 
   clf
 
-  notBoxPlot([averagedfwd(1:13)',[averagedfwd(14:end) 0]', averagedbwd(1:13)', [averagedbwd(14:end) 0]']); legend;
-  set(gca,'xticklabel',{'Control, Fwd', 'Patient, Fwd', 'Control, Bkw', 'Patient, Bkw'});
-  xlabel('Group'); ylabel('ISC'); title('ISC values'); ylim([-.01 .07]);
+  notBoxPlot([averagedfwd(1:13)', averagedbwd(1:13)', [averagedfwd(14:end) 0]',[averagedbwd(14:end) 0]']); legend;
+  set(gca,'xticklabel',{'Control, Fwd', 'Control, Bkw', 'Patient, Fwd', 'Patient, Bkw'});
+  xlabel('Group'); ylabel('ISC'); title('Forward and Backward ISC Values - Same Components'); ylim([-.01 .07]);
 
   f2 = figure;
 
