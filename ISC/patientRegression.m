@@ -1,16 +1,30 @@
-load /home/ivan/Documents/'Research Docs '/minConsciousEEG/processedDataWithInfo.mat
+datapath = '../../';
+load([datapath 'processedDataWithInfo.mat'],'dataInfo','eeg');
+Ncomp=3;
 
-l = length(eeg); lf = 37038; lb = 37040; lt = lf+lb; % define lengths of fwd and bwd segments & total length
-f = matfile('/home/ivan/Documents/Research Docs /minConsciousEEG/regressY.mat');
+N = length(eeg); % number
+lf = size(eeg(1).fwd,1); lb = size(eeg(1).bwd,1); lt = lf+lb; % define lengths of fwd and bwd segments & total length
+f = matfile([datapath 'regressY.mat']); 
+Y = f.Y(:,1:Ncomp);
 
-healthy = find([dataInfo.healthy]==1); patient = find([dataInfo.healthy]==0);
+healthy = [dataInfo.healthy]; 
 
-Y = []; X = []; Wf = []; Wb = [];
+for i = 1:N
 
-for i = 2:3
-
-	X = repmat(eeg(i).fwd, [l-1 1]);
-	Y = f.Y;
-	Y(lt*(i-1)+1:lt*i, :) = [];
-	Wf = X\Y;
+    i
+    
+    Yi = Y;   
+    if healthy(i)
+	  Yi(lt*(i-1)+1:lt*i, :) = [];
+    end
+    
+    X = repmat([eeg(i).fwd; eeg(i).bwd], [length(Yi)/lt 1]);
+	
+    Wf(:,:,i) = X\Yi; % check that they are similar to the W from ISC on normals, with Fwd and Bwd combined, wheras patienst we expect to be potentially quite different
+    
+    for j=1:Ncomp
+        cc = corrcoef([Yi(:,j) X*Wf(:,j,i)]);
+        isc(i,j) = cc(1,2);
+    end
+    
 end
