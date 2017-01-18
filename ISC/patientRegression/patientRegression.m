@@ -1,4 +1,4 @@
-datapath = '../../minConsciousEEG/';
+datapath = '../../../minConsciousEEG/';
 load([datapath 'processedDataWithInfo.mat'],'dataInfo','eeg');
 Ncomp=3;
 
@@ -14,7 +14,7 @@ for i = 1:N
     i
 
     Yi = Y;
-    if healthy(i) % 
+    if healthy(i) %
 	  Yi(lt*(i-1)+1:lt*i, :) = [];
     end
 
