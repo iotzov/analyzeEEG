@@ -1,5 +1,6 @@
 datapath = '../../../minConsciousEEG/';
 load([datapath 'processedDataWithInfo.mat'],'dataInfo','eeg');
+load([datapath 'master_w.mat']);
 Ncomp=3;
 
 N = length(eeg); % number of subjects
@@ -20,7 +21,8 @@ for i = 1:N
 
     X = repmat([eeg(i).fwd; eeg(i).bwd], [length(Yi)/lt 1]);
 
-    Wf(:,:,i) = X\Yi; % check that they are similar to the W from ISC on normals, with Fwd and Bwd combined, wheras patienst we expect to be potentially quite different
+%    Wf(:,:,i) = X\Yi; % check that they are similar to the W from ISC on normals, with Fwd and Bwd combined, wheras patienst we expect to be potentially quite different
+    Wf(:,:,i) = master_w;
 
     for j=1:Ncomp
         cc = corrcoef([Yi(:,j) X*Wf(:,j,i)]);

@@ -26,6 +26,9 @@ function displayFinalFourWay(resultStruct)
 
   end
 
+  results.averagedfwd = averagedfwd;
+  results.averagedbwd = averagedbwd;
+
   clf
 
 subplot(1,2,1)
