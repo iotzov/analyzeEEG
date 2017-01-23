@@ -8,16 +8,22 @@ function [eegVol] = structToVolume(inputStruct, desired, direction)
 
 	eegVol = [];
 
-if(direction)
+if(direction==1)
 	for i = desired
 
 		eegVol = cat(3, eegVol, inputStruct(i).fwd);
 
 	end
-else
+elseif(direction==0)
 	for i = desired
 
 		eegVol = cat(3, eegVol, inputStruct(i).bwd);
+
+	end
+elseif(direction==2)
+	for i = desired
+
+		eegVol = cat(3, eegVol, inputStruct(i).scram);
 
 	end
 end

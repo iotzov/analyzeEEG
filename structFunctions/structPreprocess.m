@@ -1,9 +1,8 @@
-for i = 1:length(eeg)
-  temp = preprocessEEG(double(eeg(i).raw)', [38:39], [], 250);
+for i = 1:length(piemandata)
+  temp = preprocessEEG(double(piemandata(i).data)', [38:39], piemanInfo(i).badChannels, 250);
 
-  templat = [eeg(i).event.latency];
-
-  eeg(i).fwd = temp(templat(1):templat(2), :);
-  eeg(i).bwd = temp(templat(3):templat(4), :);
+  piemandata(i).fwd = temp(piemandata(i).fwd(1):piemandata(i).fwd(1) + 112562, :);
+  piemandata(i).bwd = temp(piemandata(i).bwd(1):piemandata(i).bwd(1) + 112562, :);
+  piemandata(i).scram = temp(piemandata(i).scram(1):piemandata(i).scram(1) + 112562, :);
 
 end
