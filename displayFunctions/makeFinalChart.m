@@ -1,6 +1,6 @@
 %[b_isc, b_iscpersub, b_iscpersec, b_w, b_a] = iscNoDisplaySegmented_FwdAndBwd(bwd, healthyIdx, patientIdx);
-load ../../minConsciousEEG/processedDataWithInfo.mat
-[isc, iscpersub_f, iscpersub_b, w, a, af, ab] = iscNoDisplaySegmented_FwdAndBwd_separateA(structToVolume(eeg, 1:85, 1), structToVolume(eeg, 1:85, 0), 1:43, 44:85);
+%oad ../../minConsciousEEG/processedDataWithInfo.mat
+[isc, iscpersub_f, iscpersub_b, w, a, af, ab] = iscNoDisplaySegmented_FwdAndBwd_separateA(structToVolume(alice, 1:length(alice), 1), structToVolume(alice, 1:length(alice), 0), find([alice.group]==1), find([alice.group]==0));
 
 results.isc = isc;
 results.iscpersub_f = iscpersub_f;
@@ -9,7 +9,7 @@ results.w = w;
 results.a = a;
 results.af = af;
 results.ab = ab;
-results.subs = [dataInfo.subj];
+results.subs = [alice.subject];
 
 displayFinalFourWay(results)
 

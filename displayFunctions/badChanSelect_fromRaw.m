@@ -12,20 +12,23 @@ function [badChannels, dataquality] = badChanSelect(inputEEG)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 fs = 250;
+inputEEG.data = inputEEG.data';
 
 [b,a,k]=butter(5,0.5/fs*2,'high'); sos = zp2sos(b,a,k);
 
-[T,D]=size(inputEEG.fwd);
+[T,D]=size(inputEEG.data);
 
-inputEEG.fwd = inputEEG.fwd-repmat(inputEEG.fwd(1,:),T,1);  % remove starting offset to avoid filter transient
+inputEEG.data = inputEEG.data-repmat(inputEEG.data(1,:),T,1);  % remove starting offset to avoid filter transient
 
-inputEEG.fwd = sosfilt(sos,inputEEG.fwd);
+inputEEG.data = sosfilt(sos,inputEEG.data);
+
+inputEEG.data = inputEEG.data - inputEEG.data(:,38:39) * (inputEEG.data(:,38:39)\inputEEG.data);
 
 badChannels = []; removemore=1;
 
 clf
-imagesc(inputEEG.fwd'); h1=gca; caxis([-100 100]); set(h1,'xtick',[]);
-title(['Select bad channels' ' ' inputEEG.name]); set(gcf, 'units','normalized','outerposition',[0 0 1 1]);
+imagesc(inputEEG.data'); h1=gca; caxis([-100 100]); set(h1,'xtick',[]);
+title(['Select bad channels' ' ' inputEEG.subject]); set(gcf, 'units','normalized','outerposition',[0 0 1 1]);
 
 h2=axes('position',[0.1 0.03 0.8 0.05]); x=[-2 -1 0]; imagesc(x, 1, x);
 set(h2,'xtick',x,'xticklabel',{'good','OK','bad'},'ytick',[]);

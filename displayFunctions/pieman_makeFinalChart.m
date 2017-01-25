@@ -1,9 +1,16 @@
 %[b_isc, b_iscpersub, b_iscpersec, b_w, b_a] = iscNoDisplaySegmented_FwdAndBwd(bwd, healthyIdx, patientIdx);
-load /home/ivan/Documents/ResearchDocs/pieman_isc/preprocessedv2.mat
-good = [piemanInfo.dataQuality]>0;
-piemanInfo = piemanInfo(good);
-piemandata = piemandata(good);
-results = iscNoDisplaySegmented_pieman(structToVolume(piemandata, 1:33, 1), structToVolume(piemandata, 1:33, 0), structToVolume(piemandata, 1:33, 2), 1:13, 14:33);
+%load /home/ivan/Documents/ResearchDocs/pieman_isc/preprocessedv2.mat
+%good = [piemanInfo.dataQuality]>0;
+%piemanInfo = piemanInfo(good);
+%piemandata = piemandata(good);
+
+%for i = 1:33
+%  piemandata(i).fwd = piemandata(i).fwd(:, 1:37);
+%  piemandata(i).bwd = piemandata(i).bwd(:, 1:37);
+%  piemandata(i).scram = piemandata(i).scram(:, 1:37);
+%end
+
+results = iscNoDisplaySegmented_pieman(structToVolume(piemandata, 1:32, 1), structToVolume(piemandata, 1:32, 0), structToVolume(piemandata, 1:32, 2), 1:12, 13:32);
 
 
 % displayFinalFourWay(results)
@@ -24,6 +31,20 @@ results = iscNoDisplaySegmented_pieman(structToVolume(piemandata, 1:33, 1), stru
 
 %}
 
+sumf = [];
+sumb = [];
+sums = [];
+
+for i = 1:32
+  sumf = [sumf sum(results.persub_f(1:3,i))];
+  sumb = [sumb sum(results.persub_b(1:3,i))];
+  sums = [sums sum(results.persub_s(1:3,i))];
+end
+
+results.persub_s = sums;
+results.persub_b = sumb;
+results.persub_f = sumf;
+
 subplot(1,2,1)
 % plot fwd
 for i = 1:13
@@ -35,7 +56,7 @@ for i = 1:13
 end
 
 % plot bwd
-for i=14:33
+for i=14:32
   plot( 4, results.persub_b(i),'og'); hold on
   plot( 5, results.persub_f(i),'*r'); hold on
   plot( 6, results.persub_s(i),'+b'); hold on
@@ -65,4 +86,4 @@ xticks([2 5]); set(gca,'xticklabel',{'Control' 'Patient'}); legend('Forward', 'B
 [h,p9]= ttest(results.persub_f(14:end) - results.persub_s(14:end));
 subplot(1,2,1)
 sigstar({[2 5] [1 4] [1 6] [1 2] [4 5] [3 6] [5 6]}, [p2 p3 p5 p6 p7 p8 p9])
-legend('Forward', 'Backward', 'Scrambled', 'Location', 'southwest')
+legend('Backward', 'Forward', 'Scrambled', 'Location', 'southwest')
