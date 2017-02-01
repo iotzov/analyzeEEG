@@ -1,4 +1,4 @@
-function [ISC, ISC_persubject_f, ISC_persubject_b, W, A, A_f, A_b] = iscNoDisplaySegmented_FwdAndBwd(fwddata, bwddata, healthyIdx, patientIdx)
+function [ISC, ISC_persubject_f, ISC_persubject_b, W, A, A_f, A_b] = iscNoDisplaySegmented_FwdAndBwd_separateA(fwddata, bwddata, healthyIdx, patientIdx)
 %
 
 % some ISC processing parameters
