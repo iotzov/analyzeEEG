@@ -4,7 +4,7 @@ function [eegVol] = structToVolume(inputStruct, desired, direction)
 %
 % Input:   inputStruct - The struct used to house the EEG data
 %          desired - vector of desired EEG data out of 92 available
-% 				 direction - (1 or 0), 1 for fwd, 0 for bwd
+% 				 direction - (1 or 0), 1 for fwd, 0 for bwd, 2 for scrambled
 
 	eegVol = [];
 

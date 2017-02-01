@@ -1,7 +1,7 @@
 %datapath = 'C:\Users\ivan\Documents\LucasResearch\minConData\'; % Include trailing '/'!
 %load [datapath colors.mat];
 
-[isc, iscpersub_f, iscpersub_b, w, a, af, ab] = iscNoDisplaySegmented_FwdAndBwd_separateA(structToVolume(eeg, 1:length(eeg), 1), structToVolume(eeg, 1:length(eeg), 0), find([dataInfo.healthy]==1), find([dataInfo.healthy]==0));
+[isc, iscpersub_f, iscpersub_b, w, a, af, ab] = iscNoDisplaySegmented_FwdAndBwd_separateA(structToVolume(eeg, 1:length(eeg), 1), structToVolume(eeg, 1:length(eeg), 0), find([eeg.group]==1), find([eeg.group]==0));
 
 results.isc = isc;
 results.iscpersub_f = iscpersub_f;
@@ -10,7 +10,7 @@ results.w = w;
 results.a = a;
 results.af = af;
 results.ab = ab;
-results.subs = [dataInfo.subj];
+results.subs = [eeg.subject];
 
 f = figure;
 
@@ -42,7 +42,7 @@ subjectNames = {};
 for i = 1:13
   subjectPlots = [subjectPlots plot( 1, averagedfwd(i),'Marker', 'o', 'Color', colorstruct.(['s' num2str(s(i))]), 'DisplayName', ['H' num2str(s(i))])]; hold on
   plot( 2, averagedbwd(i),'Marker', '*', 'Color', colorstruct.(['s' num2str(s(i))])); hold on
-  plot([1 2], [averagedfwd(i) averagedbwd(i)], 'Color', colorstruct.(['s' num2str(s(i))])); hold on
+  plot([1 2], [averagedfwd(i) averagedbwd(i)],'Color', colorstruct.(['s' num2str(s(i))])); hold on
   subjectNames = [subjectNames ['H' num2str(s(i))]];
 end
 
@@ -50,7 +50,7 @@ end
 for i=14:length(averagedfwd)
   subjectPlots = [subjectPlots plot( 3, averagedfwd(i),'Marker', 'o', 'Color', colorstruct.(['s' num2str(s(i))]), 'DisplayName', ['P' num2str(s(i))])]; hold on
   plot( 4, averagedbwd(i),'Marker', '*', 'Color', colorstruct.(['s' num2str(s(i))])); hold on
-  plot([3 4], [averagedfwd(i) averagedbwd(i)], 'Color', colorstruct.(['s' num2str(s(i))])); hold on
+  plot([3 4], [averagedfwd(i) averagedbwd(i)],'Color', colorstruct.(['s' num2str(s(i))])); hold on
   subjectNames = [subjectNames ['P' num2str(s(i))]];
 end
 
