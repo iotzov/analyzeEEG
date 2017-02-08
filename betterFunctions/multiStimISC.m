@@ -1,6 +1,8 @@
 function [ISC, ISC_persubject, W, A] = multiStimISC(data, refsubjects, fs)
-% data is a list of volumes of dimensiosn T*D*N, where D must be the same for all volumens
-% refsubjects is list of arrays with the reference subjects for each stimulus
+% data is a cell of volumes of dimensiosn T*D*N, where D must be the same for all volumes
+% refsubjects is cell of arrays with the reference subjects for each stimulus
+%           --- This list should include the indices in N for the reference subjects (subjects which all others will be compared to)
+% fs is the recording sampling rate
 % the two lists must have the same length corresponding to the number of stimuli
 
 % some ISC processing parameters
