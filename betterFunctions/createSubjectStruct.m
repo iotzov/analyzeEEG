@@ -1,6 +1,6 @@
 function [results] = createSubjectStruct(iscpersub, subs, subjects)
   % iscpersub - Cell array that is returned by the multi-stim ISC function, length == # of stimuli
-  % subs - Cell array of length == # of stimuli of subject names for each stim
+  % subs - Cell array of subject names for each stim - (length == # of stimuli)
   % subjects - Subject class array, length = # of unique subjects, id property must be pre-set
 
   numStims = length(iscpersub);
@@ -11,7 +11,7 @@ function [results] = createSubjectStruct(iscpersub, subs, subjects)
     for j = s
 
       idx = find(subs{i}==j);
-      
+
       if(length(idx)>0)
         subjects(s==j).ISC = [subjects(s==j).ISC iscpersub{i}(:,idx)];
       else
