@@ -31,7 +31,7 @@ function [chart] = testingMakeChart(results, stimNames, numComponents, a, numRun
   end
 
   title('ISC per Subject by Stimulus - Healthy'); set(get(gca,'YLabel'),'String','ISC'); set(get(gca,'XLabel'),'String','Stimulus');
-  set(gca,'XTick',[1:numStims]); set(gca, 'XTickLabels', stimNames); xlim([0 numStims+1]); ylim([-0.02 0.08]);
+  set(gca,'XTick',[1:numStims]); set(gca, 'XTickLabels', stimNames); xlim([0 numStims+1]); ylim([-0.02 0.2]);
 
   % Plot patient
   subplot(1,2,2)
@@ -60,7 +60,7 @@ function [chart] = testingMakeChart(results, stimNames, numComponents, a, numRun
   end
 
   title('ISC per Subject by Stimulus - Patient'); set(get(gca,'YLabel'),'String','ISC'); set(get(gca,'XLabel'),'String','Stimulus');
-  set(gca,'XTick',[1:numStims]); set(gca, 'XTickLabels', stimNames); xlim([0 numStims+1]); ylim([-0.02 0.08]);
+  set(gca,'XTick',[1:numStims]); set(gca, 'XTickLabels', stimNames); xlim([0 numStims+1]); ylim([-0.02 0.2]);
 
   set(gcf, 'Position', get(0,'Screensize')); % maximize figure
   saveas(gcf, ['aliceResults run1 thru ' num2str(numRuns)], 'jpeg')
@@ -73,7 +73,7 @@ function [chart] = testingMakeChart(results, stimNames, numComponents, a, numRun
     topoplot(a(:,i),'test.loc','electrodes','off'); title(['Component ' num2str(i) ''])
   end
 
-  saveas(gcf, ['aliceResults run1 thru ' num2str(numRuns) ' projections'], 'jpeg')
+  saveas(gcf, ['aliceResults_projections run1 thru ' num2str(numRuns)], 'jpeg')
   close
 
 

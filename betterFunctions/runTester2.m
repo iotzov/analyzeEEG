@@ -2,13 +2,30 @@ load bigS
 load aliceVolumes
 load aliceInfo
 
-for i = 2:101
+q = size(alice_fwd, 3);
+
+z = ones(q, 1);z=z';
+
+z(find([bigS.id]==221))=0;
+z(find([bigS.id]==218))=0;
+z(find([bigS.id]==209))=0;
+z(find([bigS.id]==223))=0;
+z(find([bigS.id]==212))=0;
+z(find([bigS.id]==214))=0;
+
+alice_fwd(:,:,~z) = [];
+alice_bwd(:,:,~z) = [];
+bigS(~z) = [];
+
+q = size(alice_fwd, 3);
+
+for i = 2:q
 
   data = {alice_fwd(:,:,1:i) alice_bwd(:,:,1:i)};
 
-  ids = [subjects.id]; ids = ids(1:i); uniqueIDs = unique(ids);
+  ids = [bigS.id]; ids = ids(1:i); uniqueIDs = unique(ids);
 
-  refsubjects = [subjects.group]; refsubjects = refsubjects(1:i); refsubjects = {find(refsubjects==1) find(refsubjects==1)};
+  refsubjects = [bigS.group]; refsubjects = refsubjects(1:i); refsubjects = {find(refsubjects==1) find(refsubjects==1)};
 
   [isc, persub, w, a] = multiStimISC(data, refsubjects, 250);
 
@@ -19,7 +36,7 @@ for i = 2:101
   end
 
   for k = 1:2
-    for j = ids
+    for j = uniqueIDs
 
       idx = find(ids==j);
 
