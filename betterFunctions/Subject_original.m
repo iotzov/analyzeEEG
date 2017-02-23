@@ -1,4 +1,4 @@
-classdef Subject_original
+classdef SubjectOriginal
 
   properties
     id
@@ -8,7 +8,7 @@ classdef Subject_original
   end
 
   methods
-    function obj = Subject(myID)
+    function obj = SubjectOriginal(myID)
       obj.id = myID;
       obj.group = myID<300;
       obj.color = rand(1,3);

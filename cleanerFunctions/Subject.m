@@ -25,6 +25,11 @@ classdef Subject
         obj.runs(i) = obj.runs(i).preprocess();
       end
     end
+    function data = volumize(obj, stimIndex)
+      for i = 1:length(obj.runs)
+        data(:,:,i) = obj.runs(i).extract(stimIndex);
+      end
+    end
   end
 
 end

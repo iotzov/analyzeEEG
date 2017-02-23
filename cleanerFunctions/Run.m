@@ -12,7 +12,9 @@ classdef Run
     fs
     eogchannels
     stimNames
-    stimBoundaries
+    stimLengths
+    stimStart
+    ISC
     name
   end
 
@@ -39,9 +41,11 @@ classdef Run
     function data = extract(obj, stimIndex)
       % Takes index of stimBoundaries and extracts relevant data epoch
       % Returns desired sequence based on input
-      s = obj.event(obj.stimBoundaries{stimIndex}(1)).latency;
-      e = obj.event(obj.stimBoundaries{stimIndex}(2)).latency;
-      data = obj.data(s:e,:)
+      data = obj.data(obj.stimStart(stimIndex):obj.stimStart(stimIndex)+obj.stimLengths(stimIndex)-1,:);
+    end
+
+    function data = extractManually(obj, startIndex, sampleLength)
+      data = obj.data(startIndex:startIndex+sampleLength-1,:);
     end
   end
 
