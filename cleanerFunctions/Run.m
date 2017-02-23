@@ -36,11 +36,11 @@ classdef Run
       obj.data = preprocessEEG(obj.data, obj.eogchannels, obj.badChannels, obj.fs);
     end
 
-    function data = extract(obj, startEpochEvent, endEpochEvent)
-      % Takes indices of epoch starting and ending events as input
+    function data = extract(obj, stimIndex)
+      % Takes index of stimBoundaries and extracts relevant data epoch
       % Returns desired sequence based on input
-      s = obj.event(startEpochEvent).latency;
-      e = obj.event(endEpochEvent).latency;
+      s = obj.event(obj.stimBoundaries{stimIndex}(1)).latency;
+      e = obj.event(obj.stimBoundaries{stimIndex}(2)).latency;
       data = obj.data(s:e,:)
     end
   end
