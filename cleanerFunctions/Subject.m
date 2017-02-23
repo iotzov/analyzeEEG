@@ -20,6 +20,11 @@ classdef Subject
       obj.id = id;
       obj.healthy = id<300;
     end
+    function obj = preprocess(obj)
+      for i = 1:length(obj.runs)
+        obj.runs(i) = obj.runs(i).preprocess();
+      end
+    end
   end
 
 end
