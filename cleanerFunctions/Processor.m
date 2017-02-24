@@ -9,6 +9,12 @@ classdef Processor
   end
 
   methods
+    function obj = preprocess(obj)
+      for i = 1:length(obj.subjects)
+        obj.subjects(i) = obj.subjects(i).preprocess();
+      end
+    end
+
     function obj = runISC(obj)
       fwd = []; bwd = []; r = [obj.subjects]; r = [r.runs]; r = find([r.subject]<300);
       for i = 1:length(obj.subjects)
@@ -20,6 +26,7 @@ classdef Processor
 
     function chart = makeChart(obj)
       chart = figure;
+      numComps = 3;
 
       % Plot healthy stuff
 
@@ -31,17 +38,17 @@ classdef Processor
 
       for i = 1:length(s)
         for j = 1:length(obj.persub)
-          plot(j, mean(sum(obj.persub{j}(1:length(obj.persub),r==s(i)))), 'Color', obj.subjects(i).color, 'Marker', 'o'); hold on;
-          text(j+.1, mean(sum(obj.persub{j}(1:length(obj.persub),r==s(i)))), num2str(obj.subjects(i).id), 'FontSize', 6, 'Color', obj.subjects(i).color)
+          plot(j, mean(sum(obj.persub{j}(1:numComps,r==s(i)))), 'Color', obj.subjects(i).color, 'Marker', 'o'); hold on;
+          text(j+.1, mean(sum(obj.persub{j}(1:numComps,r==s(i)))), num2str(obj.subjects(i).id), 'FontSize', 6, 'Color', obj.subjects(i).color)
         end
 
         for j = 2:length(obj.persub)
-          plot([j-1 j], [mean(sum(obj.persub{j}(1:length(obj.persub),r==s(i)))) mean(sum(obj.persub{j}(1:length(obj.persub),r==s(i))))], 'Color', obj.subjects(i).color, 'LineStyle', '-'); hold on;
+          plot([j-1 j], [mean(sum(obj.persub{j-1}(1:numComps,r==s(i)))) mean(sum(obj.persub{j}(1:numComps,r==s(i))))], 'Color', obj.subjects(i).color, 'LineStyle', '-'); hold on;
         end
       end
 
       title('ISC per Subject by Stimulus - Healthy'); set(get(gca,'YLabel'),'String','ISC'); set(get(gca,'XLabel'),'String','Stimulus');
-      set(gca,'XTick',[1:length(obj.persub)]); set(gca, 'XTickLabels', {'Forward' 'Backward'}); xlim([0 numStims+1]); ylim([-0.04 0.1]);
+      set(gca,'XTick',[1:length(obj.persub)]); set(gca, 'XTickLabels', {'Forward' 'Backward'}); xlim([0 length(obj.persub)+1]); ylim([-0.04 0.1]);
 
 
       % Plot patient stuff
@@ -54,28 +61,28 @@ classdef Processor
 
       for i = 1:length(s)
         for j = 1:length(obj.persub)
-          plot(j, mean(sum(obj.persub{j}(1:length(obj.persub),r==s(i)))), 'Color', obj.subjects(i).color, 'Marker', 'o'); hold on;
-          text(j+.1, mean(sum(obj.persub{j}(1:length(obj.persub),r==s(i)))), num2str(obj.subjects(i).id), 'FontSize', 6, 'Color', obj.subjects(i).color)
+          plot(j, mean(sum(obj.persub{j}(1:numComps,r==s(i)))), 'Color', obj.subjects(i).color, 'Marker', 'o'); hold on;
+          text(j+.1, mean(sum(obj.persub{j}(1:numComps,r==s(i)))), num2str(obj.subjects(i).id), 'FontSize', 6, 'Color', obj.subjects(i).color)
         end
 
         for j = 2:length(obj.persub)
-          plot([j-1 j], [mean(sum(obj.persub{j}(1:length(obj.persub),r==s(i)))) mean(sum(obj.persub{j}(1:length(obj.persub),r==s(i))))], 'Color', obj.subjects(i).color, 'LineStyle', '-'); hold on;
+          plot([j-1 j], [mean(sum(obj.persub{j-1}(1:numComps,r==s(i)))) mean(sum(obj.persub{j}(1:numComps,r==s(i))))], 'Color', obj.subjects(i).color, 'LineStyle', '-'); hold on;
         end
       end
 
       title('ISC per Subject by Stimulus - Patient'); set(get(gca,'YLabel'),'String','ISC'); set(get(gca,'XLabel'),'String','Stimulus');
-      set(gca,'XTick',[1:length(obj.persub)]); set(gca, 'XTickLabels', {'Forward' 'Backward'}); xlim([0 numStims+1]); ylim([-0.04 0.1]);
+      set(gca,'XTick',[1:length(obj.persub)]); set(gca, 'XTickLabels', {'Forward' 'Backward'}); xlim([0 length(obj.persub)+1]); ylim([-0.04 0.1]);
 
       % Topoplots
       subplot(2,6,[7,8])
-      topoplot(obj.a(:,1),obj.subjects(1).runs(1).chanlocs,'electrodes','off'); title(['Component ' num2str(1) ''])
+      topoplot(obj.a(:,1),obj.subjects(1).runs(1).chanlocs(1:37),'electrodes','off'); title(['Component ' num2str(1) ''])
 
 
       subplot(2,6,[9,10])
-      topoplot(obj.a(:,2),obj.subjects(1).runs(1).chanlocs,'electrodes','off'); title(['Component ' num2str(2) ''])
+      topoplot(obj.a(:,2),obj.subjects(1).runs(1).chanlocs(1:37),'electrodes','off'); title(['Component ' num2str(2) ''])
 
       subplot(2,6,[11,12])
-      topoplot(obj.a(:,3),obj.subjects(1).runs(1).chanlocs,'electrodes','off'); title(['Component ' num2str(3) ''])
+      topoplot(obj.a(:,3),obj.subjects(1).runs(1).chanlocs(1:37),'electrodes','off'); title(['Component ' num2str(3) ''])
 
     end
   end
