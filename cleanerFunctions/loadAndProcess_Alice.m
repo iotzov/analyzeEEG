@@ -2,16 +2,16 @@ dataDir = '';
 dataFormat = '.set';
 eogchannels = 38:39;
 stimNames = {'Forward' 'Backward'};
-stimBoundaries = {[1 2] [3 4]};
+stimLengths = [37037 37039]
 
-files = dir(['*' dataFormat]);
+files = dir([dataDir '*' dataFormat]);
 
 for i = 1:length(files)
 
   runs(i) = Run(pop_loadset(files(i).name));
   runs(i).eogchannels = eogchannels;
   runs(i).stimNames = stimNames;
-  runs(i).stimBoundaries = stimBoundaries;
+  runs(i).stimLengths = stimLengths;
 
 end
 
