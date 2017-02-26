@@ -6,6 +6,7 @@ classdef Subject
     color
     runs
     numRuns
+    numComps = 3;
   end
 
   methods
@@ -29,6 +30,13 @@ classdef Subject
       for i = 1:length([obj.runs])
         data(:,:,i) = obj.runs(i).extract(stimIndex);
       end
+    end
+    function meanISC = getMeanISC(obj, stimNumber)
+      isc = [];
+      for i = 1:length(obj.runs)
+        isc = [isc obj.runs(i).ISC{stimNumber}];
+      end
+      meanISC = mean(sum(isc(1:3,:)));
     end
   end
 
