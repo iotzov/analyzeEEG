@@ -15,6 +15,11 @@ for i = 1:length(temp)
     text(j+.1, meanisc, num2str(temp(i).id), 'FontSize', 6, 'Color', temp(i).color)
     healthyISC(i,j) = meanisc;
   end
+	for j = 2:length(temp(1).runs(1).stimNames)
+		meanisc1 = temp(i).getMeanISC(j-1); 
+		meanisc2 = temp(i).getMeanISC(j); 
+		plot([j-1 j], [meanisc1 meanisc2], 'Color', temp(i).color, 'LineStyle', '-'); hold on;
+	end
 end
 
 title('ISC per Subject by Stimulus - Healthy'); set(get(gca,'YLabel'),'String','ISC'); set(get(gca,'XLabel'),'String','Stimulus');
@@ -24,7 +29,7 @@ set(gca,'XTick',[1:length(temp(1).runs(1).stimNames)]); set(gca, 'XTickLabels', 
 
 subplot(1,2,2)
 
-temp = subjects([subjects.healthy]);
+temp = subjects(~[subjects.healthy]);
 
 for i = 1:length(temp)
   for j = 1:length(temp(1).runs(1).stimNames)
@@ -33,6 +38,12 @@ for i = 1:length(temp)
     text(j+.1, meanisc, num2str(temp(i).id), 'FontSize', 6, 'Color', temp(i).color)
     patientisc(i,j) = meanisc;
   end
+	for j = 2:length(temp(1).runs(1).stimNames)
+                meanisc1 = temp(i).getMeanISC(j-1);
+                meanisc2 = temp(i).getMeanISC(j);
+                plot([j-1 j], [meanisc1 meanisc2], 'Color', temp(i).color, 'LineStyle', '-'); hold on;
+        end
+
 end
 
 title('ISC per Subject by Stimulus - Patient'); set(get(gca,'YLabel'),'String','ISC'); set(get(gca,'XLabel'),'String','Stimulus');
@@ -42,5 +53,5 @@ figure;
 
 for i = 1:3
   subplot(3,1,i)
-  topoplot(a(:,i), temp.subjects(1).runs(1).chanlocs(1:37), 'electrodes', 'off'); title(['Component' num2str(i)]);
+  topoplot(a(:,i), temp(1).runs(1).chanlocs(1:37), 'electrodes', 'off'); title(['Component' num2str(i)]);
 end

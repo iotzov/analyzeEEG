@@ -1,4 +1,4 @@
-dataDir = '/home/ivan/Documents/ResearchDocs/minConsciousEEG/Alice_Set_Files/';
+dataDir = '/home/ivan/minConsciousEEG/Alice_Set_Files/';
 dataFormat = '.set';
 eogchannels = 38:39;
 stimNames = {'Forward' 'Backward'};
@@ -78,4 +78,4 @@ end
 
 save([dataDir 'aliceSubjects_Processed'], 'subjects', '-v7.3')
 
-newMakeChart(subjects)
+newMakeChart(subjects, a)
