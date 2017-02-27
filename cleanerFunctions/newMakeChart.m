@@ -18,7 +18,7 @@ for i = 1:length(temp)
 end
 
 title('ISC per Subject by Stimulus - Healthy'); set(get(gca,'YLabel'),'String','ISC'); set(get(gca,'XLabel'),'String','Stimulus');
-set(gca,'XTick',[1:length(obj.persub)]); set(gca, 'XTickLabels', temp(1).runs(1).stimNames); xlim([0 length(temp(1).runs(1).stimNames)+1]); ylim([-0.04 0.1]);
+set(gca,'XTick',[1:length(temp(1).runs(1).stimNames)]); set(gca, 'XTickLabels', temp(1).runs(1).stimNames); xlim([0 length(temp(1).runs(1).stimNames)+1]); ylim([-0.04 0.1]);
 
 % Patient Subjects section
 
@@ -36,7 +36,7 @@ for i = 1:length(temp)
 end
 
 title('ISC per Subject by Stimulus - Patient'); set(get(gca,'YLabel'),'String','ISC'); set(get(gca,'XLabel'),'String','Stimulus');
-set(gca,'XTick',[1:length(obj.persub)]); set(gca, 'XTickLabels', temp(1).runs(1).stimNames); xlim([0 length(temp(1).runs(1).stimNames)+1]); ylim([-0.04 0.1]);
+set(gca,'XTick',[1:length(temp(1).runs(1).stimNames)]); set(gca, 'XTickLabels', temp(1).runs(1).stimNames); xlim([0 length(temp(1).runs(1).stimNames)+1]); ylim([-0.04 0.1]);
 
 figure;
 
