@@ -1,45 +1,18 @@
-dataDir = '/home/ivan/minConsciousEEG/Alice_Set_Files/';
-dataFormat = '.set';
-eogchannels = 38:39;
-stimNames = {'Forward' 'Backward'};
-stimLengths = [37037 37039];
-numStims = length(stimLengths);
-% if value below is 1, user will be prompted to manually select bad channels for each run
-% if value is 0, bad channel data will be assumed to be located in dataDir/badChannels.mat
-pickBadChannels = 0;
+dataDir = '/home/ivan/Documents/ResearchDocs/minConsciousEEG/Alice_Set_Files/';
+saveDir = '';
 
-files = dir([dataDir '*' dataFormat]);
+load([dataDir 'aliceRuns.mat'])
 
-if(pickBadChannels)
-  for i = 1:length(files)
+runsToExclude = [8,10,11,13,17,85];
 
-    runs(i) = Run(pop_loadset([dataDir files(i).name]));
-    runs(i).eogchannels = eogchannels;
-    runs(i).stimNames = stimNames;
-    runs(i).stimLengths = stimLengths;
-    runs(i).stimStart(1) = runs(i).event(1).latency;
-    runs(i).stimStart(2) = runs(i).event(3).latency;
-    runs(i) = runs(i).getBadChannels();
-    runs(i) = runs(i).preprocess();
+% Inform user # of files being excluded because of bad data quality
+disp('Number of runs being excluded due to bad data quality: ');
+disp(length(find([runs.dataQuality]==0))+length(runsToExclude));
 
-  end
-else
-  load([dataDir 'badChannels.mat'])
-  for i = 1:length(files)
-    runs(i) = Run(pop_loadset([dataDir files(i).name]));
-    runs(i).eogchannels = eogchannels;
-    runs(i).stimNames = stimNames;
-    runs(i).stimLengths = stimLengths;
-    runs(i).data = double(runs(i).data);
-    runs(i).stimStart(1) = runs(i).event(1).latency;
-    runs(i).stimStart(2) = runs(i).event(3).latency;
-    runs(i).badChannels = badChannels{i};
-    runs(i).dataQuality = dataQuality{i};
-    runs(i) = runs(i).preprocess();
-  end
-end
+% Remove bad runs
+runs = runs([runs.dataQuality]>0);
 
-save([dataDir 'aliceRuns'], 'runs', '-v7.3')
+runs(runsToExclude) = [];
 
 ISCdata = {};
 refSubjects = {};
@@ -76,6 +49,20 @@ for i = 1:length(sunique)
 
 end
 
-save([dataDir 'aliceSubjects_Processed'], 'subjects', '-v7.3')
+iscresults = struct();
+iscresults.w = w;
+iscresults.a = a;
+iscresults.isc = isc;
+iscresults.persub = persub;
+
+% save([dataDir 'aliceSubjects_Processed'], 'subjects', 'iscresults', '-v7.3')
 
 newMakeChart(subjects, a)
+
+set(gcf, 'Position', get(0,'Screensize')); % Maximize figure.
+saveas(gcf, [saveDir 'topoplot'], 'png');
+close
+
+set(gcf, 'Position', get(0,'Screensize')); % Maximize figure.
+saveas(gcf, [saveDir 'ISC'], 'png');
+close
