@@ -67,7 +67,7 @@ xlim([0 length(temp(1).runs(1).stimNames)+1]);
 ylim([-0.04 0.2]);
 
 [h p] = ttest2(healthyISC(:,1), patientISC(:,1))
-title(['Healthy FWD vs Patient FWD, p='])
+title(['Healthy FWD vs Patient FWD, p= ' num2str(p)])
 
 else
   temp = subjects([subjects.healthy]);
