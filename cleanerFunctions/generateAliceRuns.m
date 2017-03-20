@@ -26,7 +26,6 @@ if(pickBadChannels)
   end
 else
   load([dataDir 'badChannels.mat'])
-  files(9)=[];
   for i = 1:length(files)
     runs(i) = Run(pop_loadset([dataDir files(i).name]));
     runs(i).eogchannels = eogchannels;

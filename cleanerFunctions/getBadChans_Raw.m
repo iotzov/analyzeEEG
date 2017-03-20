@@ -27,7 +27,7 @@ badChannels = []; removemore=1;
 
 clf
 imagesc(inputEEG.data'); h1=gca; caxis([-100 100]); set(h1,'xtick',[]);
-title(['Select bad channels' ' ' num2str(inputEEG.subject)]); set(gcf, 'units','normalized','outerposition',[0 0 1 1]);
+title(['Select bad channels' ' ' num2str(inputEEG.file)]); set(gcf, 'units','normalized','outerposition',[0 0 1 1]);
 
 h2=axes('position',[0.1 0.03 0.8 0.05]); x=[-2 -1 0]; imagesc(x, 1, x);
 set(h2,'xtick',x,'xticklabel',{'good','OK','bad'},'ytick',[]);
