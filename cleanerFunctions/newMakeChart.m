@@ -75,9 +75,9 @@ else
 end
 
 
-figure;
-
-for i = 1:3
-  subplot(3,1,i)
-  topoplot(a(:,i), temp(1).runs(1).chanlocs(1:37), 'electrodes', 'off'); title(['Component' num2str(i)]);
-end
+%figure;
+%
+%for i = 1:3
+%  subplot(3,1,i)
+%  topoplot(a(:,i), temp(1).runs(1).chanlocs(1:37), 'electrodes', 'off'); title(['Component' num2str(i)]);
+%end
