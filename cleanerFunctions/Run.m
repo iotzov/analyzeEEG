@@ -35,13 +35,19 @@ classdef Run
 
     function obj = preprocess(obj)
       obj.processed = 1;
-      obj.data = preprocessEEG(obj.data, obj.eogchannels, obj.badChannels, obj.fs);
+      temp = obj.data;
+      obj.data = {};
+      for i = 1:length(obj.stimLengths)
+        obj.data{i} = preprocessEEG(temp(obj.stimStart(i):obj.stimStart(i)+obj.stimLengths(i)-1,:), obj.eogchannels, obj.badChannels, obj.fs);
+      end
+      %obj.data = preprocessEEG(obj.data, obj.eogchannels, obj.badChannels, obj.fs);
     end
 
     function data = extract(obj, stimIndex)
       % Takes index of stimBoundaries and extracts relevant data epoch
       % Returns desired sequence based on input
-      data = obj.data(obj.stimStart(stimIndex):obj.stimStart(stimIndex)+obj.stimLengths(stimIndex)-1,:);
+      %data = obj.data(obj.stimStart(stimIndex):obj.stimStart(stimIndex)+obj.stimLengths(stimIndex)-1,:);
+      data = obj.data{stimIndex};
     end
 
     function data = extractManually(obj, startIndex, sampleLength)
