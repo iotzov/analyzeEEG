@@ -50,7 +50,7 @@ classdef Run
       %data = obj.data(obj.stimStart(stimIndex):obj.stimStart(stimIndex)+obj.stimLengths(stimIndex)-1,:);
       canExtract = find(obj.stimIDs==stimIndex);
       if(canExtract)
-        data = obj.data{stimIndex};
+        data = obj.data{canExtract};
       else
         data = [];
       end

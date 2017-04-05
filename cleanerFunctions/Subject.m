@@ -15,21 +15,28 @@ classdef Subject
       obj.runs= [obj.runs run];
       obj.numRuns = length(obj.runs);
     end
-    function obj = Subject()
+    function obj = Subject(id)
       obj.color = rand(1,3);
+      obj = obj.setID(id);
     end
     function obj = setID(obj, id)
       obj.id = id;
       obj.healthy = id<300;
     end
     function obj = preprocess(obj)
-      for i = 1:length(obj.runs)
-        obj.runs(i) = obj.runs(i).preprocess();
+      for j = 1:length(obj)
+        for i = 1:length(obj(j).runs)
+          obj(j).runs(i) = obj(j).runs(i).preprocess();
+        end
       end
     end
     function data = volumize(obj, stimIndex)
+      data = [];
       for i = 1:length([obj.runs])
-        data(:,:,i) = obj.runs(i).extract(stimIndex);
+        temp = obj.runs(i).extract(stimIndex);
+        if(~isempty(temp))
+          data = cat(3, data, temp);
+        end
       end
     end
     function meanISC = getMeanISC(obj, stimNumber)
@@ -41,10 +48,15 @@ classdef Subject
     end
     function plotSelf(obj)
       for i=1:length(obj.ISC)
-        values(i) = mean(sum(obj.ISC{i}(1:3,:)));
+        if(~isempty(obj.ISC{i}))
+          values(i) = mean(sum(obj.ISC{i}(1:3,:)));
+        else
+          values(i) = NaN;
+        end
       end
       plot([1:length(obj.ISC)], values, 'Marker', 'o', 'Color', obj.color); hold on;
-      text(0.7, values(1), num2str(obj.id), 'FontSize', 6, 'Color', obj.color); hold on;
+      text(0.8, double(values(1)), num2str(obj.id), 'FontSize', 6, 'Color', obj.color); hold on;
+    end
   end
 
 end
