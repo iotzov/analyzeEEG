@@ -7,6 +7,7 @@ classdef Subject
     runs
     numRuns
     numComps = 3;
+    ISC
   end
 
   methods
@@ -38,6 +39,12 @@ classdef Subject
       end
       meanISC = mean(sum(isc(1:3,:)));
     end
+    function plotSelf(obj)
+      for i=1:length(obj.ISC)
+        values(i) = mean(sum(obj.ISC{i}(1:3,:)));
+      end
+      plot([1:length(obj.ISC)], values, 'Marker', 'o', 'Color', obj.color); hold on;
+      text(0.7, values(1), num2str(obj.id), 'FontSize', 6, 'Color', obj.color); hold on;
   end
 
 end

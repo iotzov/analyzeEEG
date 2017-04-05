@@ -16,6 +16,7 @@ classdef Run
     stimStart
     ISC
     name
+    stimIDs % 1=aliceFWD, 2=aliceBWD, 3=piemanFWD, 4=piemanBWD, 5=piemanSCR
   end
 
   methods
@@ -47,7 +48,12 @@ classdef Run
       % Takes index of stimBoundaries and extracts relevant data epoch
       % Returns desired sequence based on input
       %data = obj.data(obj.stimStart(stimIndex):obj.stimStart(stimIndex)+obj.stimLengths(stimIndex)-1,:);
-      data = obj.data{stimIndex};
+      canExtract = find(obj.stimIDs==stimIndex);
+      if(canExtract)
+        data = obj.data{stimIndex};
+      else
+        data = [];
+      end
     end
 
     function data = extractManually(obj, startIndex, sampleLength)
