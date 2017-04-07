@@ -35,9 +35,11 @@ classdef Run
     end
 
     function obj = preprocess(obj)
-      obj.processed = 1;
+      obj.processed = 1; % Set processed flag to 1
+      obj.chanlocs(obj.eogchannels) = []; % Remove EOG channels from channel locations
       temp = obj.data;
       obj.data = {};
+      % Pre
       for i = 1:length(obj.stimLengths)
         obj.data{i} = preprocessEEG(temp(obj.stimStart(i):obj.stimStart(i)+obj.stimLengths(i)-1,:), obj.eogchannels, obj.badChannels, obj.fs);
       end

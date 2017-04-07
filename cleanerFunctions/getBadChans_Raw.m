@@ -21,28 +21,48 @@ inputEEG.data = inputEEG.data-repmat(inputEEG.data(1,:),T,1);  % remove starting
 
 inputEEG.data = sosfilt(sos,inputEEG.data);
 
-inputEEG.data = inputEEG.data - inputEEG.data(:,38:39) * (inputEEG.data(:,38:39)\inputEEG.data);
+inputEEG.data = inputEEG.data - inputEEG.data(:,inputEEG.eogchannels) * (inputEEG.data(:,inputEEG.eogchannels)\inputEEG.data);
+inputEEG.data(:, inputEEG.eogchannels) = [];
 
 badChannels = []; removemore=1;
 
 clf
-imagesc(inputEEG.data'); h1=gca; caxis([-100 100]); set(h1,'xtick',[]);
-title(['Select bad channels' ' ' num2str(inputEEG.file)]); set(gcf, 'units','normalized','outerposition',[0 0 1 1]);
 
+subplot(1,2,1); imagesc(inputEEG.data'); h1=gca; caxis([-100 100]); set(h1,'xtick',[]);
+title(['Select bad channels' ' ' num2str(inputEEG.file)]);
 h2=axes('position',[0.1 0.03 0.8 0.05]); x=[-2 -1 0]; imagesc(x, 1, x);
 set(h2,'xtick',x,'xticklabel',{'good','OK','bad'},'ytick',[]);
 title('Click on quality to continue.');
 set(gcf, 'Position', get(0,'Screensize')); % Maximize figure.
 axes(h1);
-while(removemore)
-pos=ginput(1);
 
-if pos(1)>0
+subplot(2,2,4);
+[R,fbin] = pwelch(inputEEG.data, inputEEG.fs, [], [], inputEEG.fs);
+plot(fbin,db(R)); drawnow; xlim([min(fbin) max(fbin)]);
+xlabel('Freq (Hz)')
+ylabel('Power (dB)')
+
+data = inputEEG.data;
+
+while(removemore)
+
+  subplot(1,2,1); imagesc(data'); h1=gca; caxis([-100 100]); set(h1,'xtick',[]);
+  title(['Select bad channels' ' ' num2str(inputEEG.file)]);
+
+  subplot(2,2,2)
+  plot(data); ylim([-100 100])
+
+  pos=ginput(1);
+    
+  if pos(1)>0
+      pos(2)
     badChannels = [badChannels round(pos(2))];
-else
-  removemore=0;
+  else
+    removemore=0;
     dataquality = round(abs(pos(1)));
-end
+  end
+  
+  data(:,badChannels) = 0;
 
 end
 
