@@ -20,7 +20,8 @@ classdef Run
   end
 
   methods
-    function obj = Run(setHeader)
+  function obj = Run(setHeader)
+    if ~isfield(setHeader, 'BDF')
       obj.data = setHeader.data';
       obj.event = setHeader.event;
       obj.chanlocs = setHeader.chanlocs;
@@ -28,6 +29,16 @@ classdef Run
       obj.subject = str2num(obj.file(3:5));
       obj.processed = 0;
       obj.fs = setHeader.srate;
+    else
+      obj.data = sread(setHeader);
+      obj.event = setHeader.EVENT;
+      [pwd '/' 'BioSemi64.locs']
+      obj.chanlocs = pop_readlocs([pwd '/' 'BioSemi64.loc']);
+      obj.file = [setHeader.FILE.Path '/' setHeader.FILE.Name];
+      obj.subject = str2num(setHeader.FILE.Name(end));
+      obj.processed = 0;
+      obj.fs = setHeader.SampleRate;
+    end
     end
 
     function obj = getBadChannels(obj)
