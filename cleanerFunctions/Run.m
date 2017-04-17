@@ -67,6 +67,20 @@ function data = extractManually(obj, startIndex, sampleLength)
   data = obj.data(startIndex:startIndex+sampleLength-1,:);
 end
 
+function subjects = getSubjects(obj)
+
+  s = [obj.subject];
+  S = unique(s);
+
+  subjects = Subject(1);
+
+  for i = 1:length(S)
+    subjects(i) = Subject(S(i));
+    subjects(i) = subjects(i).addRun(obj(find(s==S(i))));
+  end
+
+end
+
 end
 
 end
