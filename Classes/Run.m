@@ -2,30 +2,29 @@ classdef Run
 
 properties
 
-data
-file
-chanlocs
-processed
-event
-subject
-dataQuality
-badChannels
-fs
-eogchannels
-stimNames
-stimLengths
-stimStart
-ISC
-name
-stimIDs % 1=aliceFWD, 2=aliceBWD, 3=piemanFWD, 4=piemanBWD, 5=piemanSCR
-stimEnd
+data            % EEG data for this run
+file            % name of the original data file
+chanlocs        % channel location struct
+processed       % bool variable indicating if data is preprocessed or not
+event           % event struct of original run file
+subject         % subject ID
+dataQuality     % data quality ranking from 0 to 2, 0 being bad and 2 being great
+badChannels     % which channels in the recording are bad and should be removed
+fs              % sampling rate of the recording
+eogChannels     %* which channels if any are EOG channels
+stimNames       %* names of the stimuli presented
+stimLengths     %* array of the lengths of stims presented
+stimStart       %* array of the start times of stimuli (start times should be the first sample to include)
+stimIDs         %* IDs of the stimuli, should be in same order as stimStart and stimLengths
+
+% * indicates properties that should be set manually
 
 end
 
 methods
 function obj = Run(setHeader)
   if nargin>0
-    obj.data = setHeader.data';
+    obj.data = double(setHeader.data');
     obj.event = setHeader.event;
     obj.chanlocs = setHeader.chanlocs;
     obj.file = setHeader.filename;
@@ -36,25 +35,29 @@ function obj = Run(setHeader)
 end
 
 function obj = getBadChannels(obj)
+
   [obj.badChannels obj.dataQuality] = getBadChans_Raw(obj);
+  
 end
 
 function obj = preprocess(obj)
   obj.processed = 1; % Set processed flag to 1
-  % obj.chanlocs(obj.eogchannels) = []; % Remove EOG channels from channel locations
-  temp = obj.data;
+
+  options.badchannels = obj.badChannels;
+  options.eogchannels = obj.eogChannels;
+
+  temp = preprocessEEG_RPCA(obj.data, obj.fs, options);
   obj.data = {};
-  % Pre
+
   for i = 1:length(obj.stimLengths)
-    obj.data{i} = preprocessEEG_withOffset(temp(obj.stimStart(i):obj.stimStart(i)+obj.stimLengths(i)-1,:), obj.eogchannels, obj.badChannels, obj.fs);
+    obj.data{i} = temp(obj.stimStart(i):obj.stimStart(i) + obj.stimLengths(i), :);
   end
-  %obj.data = preprocessEEG(obj.data, obj.eogchannels, obj.badChannels, obj.fs);
+
 end
 
 function data = extract(obj, stimIndex)
-  % Takes index of stimBoundaries and extracts relevant data epoch
+  % Takes ID of desired sequence and returns requested EEG data
   % Returns desired sequence based on input
-  %data = obj.data(obj.stimStart(stimIndex):obj.stimStart(stimIndex)+obj.stimLengths(stimIndex)-1,:);
   canExtract = find(obj.stimIDs==stimIndex);
   if(canExtract)
     data = obj.data{canExtract};

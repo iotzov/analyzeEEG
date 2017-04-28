@@ -11,7 +11,6 @@ function [badChannels, dataquality] = getBadChans_Raw(inputEEG)
 %
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-inputEEG.fs = inputEEG.fs/4;
 fs = inputEEG.fs;
 
 inputEEG.data = downsample(inputEEG.data, 4);
@@ -22,10 +21,9 @@ inputEEG.data = downsample(inputEEG.data, 4);
 
 inputEEG.data = inputEEG.data-repmat(inputEEG.data(1,:),T,1);  % remove starting offset to avoid filter transient
 
-inputEEG.data = sosfilt(sos,inputEEG.data);
+inputEEG.data = sosfilt(sos, inputEEG.data);
 
-inputEEG.data = inputEEG.data - inputEEG.data(:,inputEEG.eogchannels) * (inputEEG.data(:,inputEEG.eogchannels)\inputEEG.data);
-inputEEG.data(:, inputEEG.eogchannels) = [];
+inputEEG.data = inputEEG.data - inputEEG.data(:,inputEEG.eogChannels) * (inputEEG.data(:,inputEEG.eogChannels)\inputEEG.data);
 
 badChannels = []; removemore=1;
 
