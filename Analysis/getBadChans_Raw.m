@@ -13,7 +13,7 @@ function [badChannels, dataquality] = getBadChans_Raw(inputEEG)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 fs = inputEEG.fs;
 
-inputEEG.data = downsample(inputEEG.data, 4);
+% inputEEG.data = downsample(inputEEG.data, 4);
 
 [b,a,k]=butter(5,0.5/fs*2,'high'); sos = zp2sos(b,a,k);
 
@@ -47,7 +47,7 @@ axes(h1);
 fig2 = figure(2);
 
 subplot(2,1,1);
-[R,fbin] = pwelch(inputEEG.data, inputEEG.fs, [], [], inputEEG.fs);
+[R,fbin] = pwelch(downsample(inputEEG.data, 8), inputEEG.fs, [], [], inputEEG.fs);
 plot(fbin,db(R));
 xlim([min(fbin) max(fbin)]);
 xlabel('Freq (Hz)')
