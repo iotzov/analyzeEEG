@@ -8,6 +8,7 @@ classdef Subject
     numRuns         % length of runs array
     numComps = 3;   % number of ISC components to work with
     ISC             % ISC values
+    stimIDs         % IDs of subject's available stims
   end
 
   methods
@@ -15,6 +16,7 @@ classdef Subject
     function obj = addRun(obj, run)
       obj.runs= [obj.runs run];
       obj.numRuns = length(obj.runs);
+      obj.stimIDs = unique([obj.stimIDs [obj.runs.stimIDs]]);
     end
 
     function obj = Subject(id)
@@ -75,6 +77,7 @@ classdef Subject
     end
 
     function plotSelf(obj)
+
       for i=1:length(obj.ISC)
         if(~isempty(obj.ISC{i}))
           values(i) = mean(sum(obj.ISC{i}(1:3,:)));
@@ -82,8 +85,36 @@ classdef Subject
           values(i) = NaN;
         end
       end
+
       plot([1:length(obj.ISC)], values, 'Marker', 'o', 'Color', obj.color); hold on;
       text(0.8, double(values(1)), num2str(obj.id), 'FontSize', 6, 'Color', obj.color); hold on;
+
+    end
+
+    function obj = runISC(obj)
+
+      stims = unique([obj.stimIDs]);
+      subs = [obj.id];
+
+      for i = 1:length(stims)
+        [data{i} order{i}] = obj.volumize2(stims(i));
+        ref{i} = order{i}(find(order{i} < 300));
+      end
+
+      [isc iscpersub w a] = multiStimISC(data, ref, 250);
+
+      for i = 1:length(subs)
+
+        for j = 1:length(iscpersub)
+
+          idx = find(order{j} == subs(i));
+
+          obj(i).ISC{j} = iscpersub{j}(:,idx);
+
+        end
+
+      end
+
     end
 
   end
