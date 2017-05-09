@@ -56,6 +56,12 @@ data = sosfilt(sos, data);
 % regress out eye-movements
 data = data - data(:, options.eogchannels) * (data(:, options.eogchannels) \ data);
 
+% zero out bad channels
+data(:, options.badchannels(:)) = 0;
+
+% remove eog channels
+data(:, options.eogchannels) = [];
+
 % run RPCA on data
 data = inexact_alm_rpca(data);
 
@@ -65,12 +71,6 @@ data = filter(h, 1, flipud(filter(h, 1, flipud(data))));
 
 % Mark NaNs as 0
 data(isnan(data)) = 0;
-
-% also zero out bad channels
-data(:, options.badchannels(:)) = 0;
-
-% remove eog channels
-data(:, options.eogchannels) = [];
 
 X = data;
 

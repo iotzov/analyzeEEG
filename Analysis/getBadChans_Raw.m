@@ -47,7 +47,9 @@ axes(h1);
 fig2 = figure(2);
 
 subplot(2,1,1);
-[R,fbin] = pwelch(downsample(inputEEG.data, 8), inputEEG.fs, [], [], inputEEG.fs);
+d = downsample(inputEEG.data, 8);
+d(:,inputEEG.eogChannels) = [];
+[R,fbin] = pwelch(d, inputEEG.fs/8, [], [], inputEEG.fs/8);
 plot(fbin,db(R));
 xlim([min(fbin) max(fbin)]);
 xlabel('Freq (Hz)')

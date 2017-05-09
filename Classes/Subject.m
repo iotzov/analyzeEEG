@@ -56,12 +56,16 @@ classdef Subject
       order = [];
 
       runs = [obj.runs];
+
+	total = 0;
+
       for i = 1:length(runs)
 
         temp = runs(i).extract(stimIndex);
         if ~isempty(temp)
           data = cat(3, data, temp);
           order = [order runs(i).subject];
+	total = total + 1;
         end
 
       end
@@ -98,7 +102,7 @@ classdef Subject
 
       for i = 1:length(stims)
         [data{i} order{i}] = obj.volumize2(stims(i));
-        ref{i} = order{i}(find(order{i} < 300));
+        ref{i} = find(order{i} < 300);
       end
 
       [isc iscpersub w a] = multiStimISC(data, ref, 250);
