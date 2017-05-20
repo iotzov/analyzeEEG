@@ -13,8 +13,9 @@ badChannels     % which channels in the recording are bad and should be removed
 fs              % sampling rate of the recording
 eogChannels     %* which channels if any are EOG channels
 stimNames       %* names of the stimuli presented
-stimLengths     %* array of the lengths of stims presented
+stimLengths     %* array of the lengths of stims presented (if stimEnd-stimStart > stimLength then samples trimmed from the beginning until they are equal)
 stimStart       %* array of the start times of stimuli (start times should be the first sample to include)
+stimEnd         %* array of the end times of stimuli (end times should be the last sample to include)
 stimIDs         %* IDs of the stimuli, should be in same order as stimStart and stimLengths
 
 % * indicates properties that should be set manually
@@ -37,7 +38,7 @@ end
 function obj = getBadChannels(obj)
 
   [obj.badChannels obj.dataQuality] = getBadChans_Raw(obj);
-  
+
 end
 
 function obj = preprocess(obj)
@@ -47,10 +48,13 @@ function obj = preprocess(obj)
   options.eogchannels = obj.eogChannels;
 
   temp = preprocessEEG_RPCA(obj.data, obj.fs, options);
+  %temp = preprocessEEG(obj.data, obj.eogChannels, obj.badChannels, obj.fs);
   obj.data = {};
 
   for i = 1:length(obj.stimLengths)
-    obj.data{i} = temp(obj.stimStart(i):obj.stimStart(i) + obj.stimLengths(i), :);
+    %obj.data{i} = temp(obj.stimStart(i):obj.stimStart(i) + obj.stimLengths(i), :);
+    obj.data{i} = temp(obj.stimStart(i):obj.stimEnd(i), :);
+    obj.data{i} = obj.data{i}(length(obj.data{i}) - obj.stimLengths(i)+1:end, :);
   end
 
 end

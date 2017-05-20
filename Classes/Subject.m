@@ -57,7 +57,7 @@ classdef Subject
 
       runs = [obj.runs];
 
-	total = 0;
+	    total = 0;
 
       for i = 1:length(runs)
 
@@ -65,7 +65,7 @@ classdef Subject
         if ~isempty(temp)
           data = cat(3, data, temp);
           order = [order runs(i).subject];
-	total = total + 1;
+	        total = total + 1;
         end
 
       end
@@ -80,22 +80,38 @@ classdef Subject
       meanISC = mean(sum(isc(1:3,:)));
     end
 
-    function plotSelf(obj)
+    function isc = getISC(obj, stimNumber)
+      isc = [];
+
+      for i = 1:length(obj)
+        x = find(obj(i).stimIDs==stimNumber);
+        if ~isempty(x)
+          isc = cat(2, isc, mean(obj(i).ISC{x}, 2));
+        end
+      end
+
+    end
+
+    function plotSelf(obj, marker)
+
+      if nargin < 2
+        marker = 'o';
+      end
 
       for i=1:length(obj.ISC)
         if(~isempty(obj.ISC{i}))
-          values(i) = mean(sum(obj.ISC{i}(1:3,:)));
+          values(i) = mean(sum(obj.ISC{i}(1:3,:), 1), 2);
         else
           values(i) = NaN;
         end
       end
 
-      plot([1:length(obj.ISC)], values, 'Marker', 'o', 'Color', obj.color); hold on;
+      plot([1:length(obj.ISC)], values, 'Marker', marker, 'Color', obj.color); hold on;
       text(0.8, double(values(1)), num2str(obj.id), 'FontSize', 6, 'Color', obj.color); hold on;
 
     end
 
-    function obj = runISC(obj)
+    function [obj iscresults] = runISC(obj)
 
       stims = unique([obj.stimIDs]);
       subs = [obj.id];
@@ -105,18 +121,23 @@ classdef Subject
         ref{i} = find(order{i} < 300);
       end
 
-      [isc iscpersub w a] = multiStimISC(data, ref, 250);
+      [iscresults.isc iscresults.iscpersub iscresults.w iscresults.a] = multiStimISC_test(data, ref, 250);
 
       for i = 1:length(subs)
 
-        for j = 1:length(iscpersub)
+        for j = 1:length(iscresults.iscpersub)
 
           idx = find(order{j} == subs(i));
 
-          obj(i).ISC{j} = iscpersub{j}(:,idx);
+          obj(i).ISC{j} = iscresults.iscpersub{j}(:,idx);
 
         end
 
+      end
+
+      for i = 1:3
+        subplot(3,1,i);
+        topoplot(iscresults.a(:,i), obj(1).runs(1).chanlocs);
       end
 
     end
