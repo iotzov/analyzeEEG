@@ -135,10 +135,10 @@ classdef Subject
 
       end
 
-      for i = 1:3
-        subplot(3,1,i);
-        topoplot(iscresults.a(:,i), obj(1).runs(1).chanlocs);
-      end
+%       for i = 1:3
+%         subplot(3,1,i);
+%         topoplot(iscresults.a(:,i), obj(1).runs(1).chanlocs);
+%       end
 
     end
 

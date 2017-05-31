@@ -1,4 +1,4 @@
-function [ISC, ISC_persubject, W, A] = multiStimISC(data, refsubjects, fs)
+function [ISC, ISC_persubject, W, A] = multiStimISC_specialForPieman(data, refsubjects, fs)
 % data is a cell of volumes of dimensiosn T*D*N, where D must be the same for all volumes
 % refsubjects is cell of arrays with the reference subjects for each stimulus
 %           --- This list should include the indices in N for the reference subjects (subjects which all others will be compared to)
@@ -58,6 +58,10 @@ Rw_reg = (1-gamma)*Rw + gamma*mean(eig(Rw))*eye(size(Rw));
 
 % compute correlated components W using regularized Rw, sort components by ISC
 [W,ISC]=eig(Rb,Rw_reg); [ISC,indx]=sort(diag(ISC),'descend'); W=W(:,indx);
+
+load oldAlice_results.mat
+
+W = result.w;
 
 % compute forward model ("scalp projections") A
 A=Rw*W*inv(W'*Rw*W);
