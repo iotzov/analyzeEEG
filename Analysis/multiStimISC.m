@@ -18,7 +18,7 @@ end
 Dcommon = size(data{1},2);
 
 % compute within- and between-subjects covrariances averaged across all stimuli
-Rw = 0; Rb = 0;
+Rw = 0;
 for s=1:Nstim
 
   X = data{s};
@@ -31,9 +31,27 @@ for s=1:Nstim
 
   % compute within- and between-subject covariances
   Rw = Rw +       1/N{s}* sum(Rij{s}(:,:,1:N{s}+1:N{s}*N{s}),3)/Nstim;  % pooled over all subjects
-  Rb = Rb + 1/(N{s}-1)/N{s}*(sum(Rij{s}(:,:,:),3) - N{s}*Rw)/Nstim;  % pooled over all pairs of subjects
 
 end
+
+Rb = 0;
+for s=1:Nstim
+
+  X = data{s};
+
+
+  [T,D,N{s}] = size(X);
+
+  if D~=Dcommon, error('All datasets must have same number of channels!'); end
+
+  Rij{s} = permute(reshape(cov(X(:,:)),[D N{s}  D N{s}]),[1 3 2 4]); % check this line!!!
+
+  % compute within- and between-subject covariances
+  Rb = Rb + 1/(N{s}-1)/N{s}*(sum(Rij{s}(:,:,:),3) - N{s}*Rw);  % pooled over all pairs of subjects
+
+end
+
+Rb = Rb/Nstim;
 
 % shrinkage regularization of Rw
 Rw_reg = (1-gamma)*Rw + gamma*mean(eig(Rw))*eye(size(Rw));

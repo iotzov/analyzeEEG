@@ -61,7 +61,7 @@ Rw_reg = (1-gamma)*Rw + gamma*mean(eig(Rw))*eye(size(Rw));
 
 load oldAlice_results.mat
 
-W = result.w;
+W = results.w;
 
 % compute forward model ("scalp projections") A
 A=Rw*W*inv(W'*Rw*W);
