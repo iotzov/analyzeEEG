@@ -20,7 +20,7 @@ stimIDs         %* IDs of the stimuli, should be in same order as stimStart and 
 
 % * indicates properties that should be set manually
 
-end
+end % end properties
 
 methods
 function obj = Run(setHeader)
@@ -92,6 +92,17 @@ function subjects = getSubjects(obj)
 
 end
 
-end
+function [R fbin] = getpsd(obj, stimIndex)
+
+  canExtract = find(obj.stimIDs==stimIndex);
+  if(canExtract)
+    [R fbin] = getPSD(obj.data{canExtract}, obj.fs)
+  else
+    warning(['Run object ' obj.file ' does not contain stimulus #' num2str(stimIndex)]);
+  end
 
 end
+
+end % end methods
+
+end % end classdef

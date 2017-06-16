@@ -47,6 +47,9 @@ sos = zp2sos(b, a, k);
 
 data = X(:,:);
 
+% make sure there are no NaNs to start with
+data(isnan(data)) = 0;
+
 % remove starting offset to avoid filter transient
 data = data - repmat(data(1, :), T, 1);
 
