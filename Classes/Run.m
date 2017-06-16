@@ -54,7 +54,11 @@ function obj = preprocess(obj)
   for i = 1:length(obj.stimLengths)
     %obj.data{i} = temp(obj.stimStart(i):obj.stimStart(i) + obj.stimLengths(i), :);
     obj.data{i} = temp(obj.stimStart(i):obj.stimEnd(i), :);
-    obj.data{i} = obj.data{i}(length(obj.data{i}) - obj.stimLengths(i)+1:end, :);
+    if(length(obj.data{i}) - obj.stimLengths(i)+1 < 0)
+        obj.data{i} = temp(obj.stimStart(i):obj.stimStart(i)+obj.stimLengths(i)-1, :);
+    else
+        obj.data{i} = obj.data{i}(length(obj.data{i}) - obj.stimLengths(i)+1:end, :);
+    end
   end
 
 end

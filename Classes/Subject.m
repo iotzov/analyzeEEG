@@ -121,7 +121,7 @@ classdef Subject
         ref{i} = find(order{i} < 300);
       end
 
-      [iscresults.isc iscresults.iscpersub iscresults.w iscresults.a] = multiStimISC_specialForPieman(data, ref, 250);
+      [iscresults.isc iscresults.iscpersub iscresults.w iscresults.a] = multiStimISC_v2(data, ref, 250);
       %[iscresults.isc iscresults.iscpersub iscresults.w iscresults.a] = multiStimISC(data, ref, 250);
 
       for i = 1:length(subs)

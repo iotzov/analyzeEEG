@@ -4,8 +4,8 @@ function varargout=sigstar(groups,stats,nosort)
     % H = sigstar(groups,stats,nsort)
     %
     % Purpose
-    % Add stars and lines highlighting significant differences between pairs of groups.
-    % The user specifies the groups and associated p-values. The function handles much of
+    % Add stars and lines highlighting significant differences between pairs of groups. 
+    % The user specifies the groups and associated p-values. The function handles much of 
     % the placement and drawing of the highlighting. Stars are drawn according to:
     %   * represents p<=0.05
     %  ** represents p<=1E-2
@@ -13,28 +13,28 @@ function varargout=sigstar(groups,stats,nosort)
     %
     %
     % Inputs
-    % groups - a cell array defining the pairs of groups to compare. Groups defined
-    %          either as pairs of scalars indicating locations along the X axis or as
-    %          strings corresponding to X-tick labels. Groups can be a mixture of both
+    % groups - a cell array defining the pairs of groups to compare. Groups defined 
+    %          either as pairs of scalars indicating locations along the X axis or as 
+    %          strings corresponding to X-tick labels. Groups can be a mixture of both 
     %          definition types.
-    % stats -  a vector of p-values the same length as groups. If empty or missing it's
+    % stats -  a vector of p-values the same length as groups. If empty or missing it's 
     %          assumed to be a vector of 0.05s the same length as groups. Nans are treated
     %          as indicating non-significance.
-    % nsort -  optional, 0 by default. If 1, then significance markers are plotted in
-    %          the order found in groups. If 0, then they're sorted by the length of the
+    % nsort -  optional, 0 by default. If 1, then significance markers are plotted in 
+    %          the order found in groups. If 0, then they're sorted by the length of the 
     %          bar.
     %
     % Outputs
     % H - optionally return handles for significance highlights. Each row is a different
     %     highlight bar. The first column is the line. The second column is the text (stars).
-    %
+    %     
     %
     % Examples
-    % 1.
+    % 1. 
     % bar([5,2,1.5])
     % sigstar({[1,2], [1,3]})
     %
-    % 2.
+    % 2. 
     % bar([5,2,1.5])
     % sigstar({[2,3],[1,2], [1,3]},[nan,0.05,0.05])
     %
@@ -47,8 +47,8 @@ function varargout=sigstar(groups,stats,nosort)
     % ylim([-3,6.5])
     % set(H,'color','r')
     %
-    % 4. Note the difference in the order with which we define the groups in the
-    %    following two cases.
+    % 4. Note the difference in the order with which we define the groups in the 
+    %    following two cases. 
     % x=[1,2,3,2,1];
     % subplot(1,2,1)
     % bar(x)
@@ -60,10 +60,10 @@ function varargout=sigstar(groups,stats,nosort)
     % ALSO SEE: demo_sigstar
     %
     % KNOWN ISSUES:
-    % 1. Algorithm for identifying whether significance bar will overlap with
+    % 1. Algorithm for identifying whether significance bar will overlap with 
     %    existing plot elements may not work in some cases (see line 277)
     % 2. Bars may not look good on exported graphics with small page sizes.
-    %    Simply increasing the width and height of the graph with the
+    %    Simply increasing the width and height of the graph with the 
     %    PaperPosition property of the current figure should fix things.
     %
     % Rob Campbell - CSHL 2013
@@ -72,13 +72,13 @@ function varargout=sigstar(groups,stats,nosort)
 
     %Input argument error checking
 
-    %If the user entered just one group pair and forgot to wrap it in a cell array
+    %If the user entered just one group pair and forgot to wrap it in a cell array 
     %then we'll go easy on them and wrap it here rather then generate an error
     if ~iscell(groups) & length(groups)==2
         groups={groups};
     end
 
-    if nargin<2
+    if nargin<2 
         stats=repmat(0.05,1,length(groups));
     end
     if isempty(stats)
@@ -115,10 +115,10 @@ function varargout=sigstar(groups,stats,nosort)
     %3. A cell array containing one index and one string
     %
     % For our function to run, we will need to convert all of these into pairs of
-    % indices. Here we loop through groups and do this.
+    % indices. Here we loop through groups and do this. 
 
-    xlocs=nan(length(groups),2); %matrix that will store the indices
-    xtl=get(gca,'XTickLabel');
+    xlocs=nan(length(groups),2); %matrix that will store the indices 
+    xtl=get(gca,'XTickLabel');  
 
     for ii=1:length(groups)
         grp=groups{ii};
@@ -147,7 +147,7 @@ function varargout=sigstar(groups,stats,nosort)
 
     end
 
-    %If there are any NaNs we have messed up.
+    %If there are any NaNs we have messed up. 
     if any(isnan(xlocs(:)))
         error('Some groups were not found')
     end
@@ -158,10 +158,10 @@ function varargout=sigstar(groups,stats,nosort)
 
 
     %Optionally sort sig bars from shortest to longest so we plot the shorter ones first
-    %in the loop below. Usually this will result in the neatest plot. If we waned to
-    %optimise the order the sig bars are plotted to produce the neatest plot, then this
+    %in the loop below. Usually this will result in the neatest plot. If we waned to 
+    %optimise the order the sig bars are plotted to produce the neatest plot, then this 
     %is where we'd do it. Not really worth the effort, though, as few plots are complicated
-    %enough to need this and the user can define the order very easily at the command line.
+    %enough to need this and the user can define the order very easily at the command line. 
     if ~nosort
         [~,ind]=sort(xlocs(:,2)-xlocs(:,1),'ascend');
         xlocs=xlocs(ind,:);groups=groups(ind);
@@ -171,14 +171,14 @@ function varargout=sigstar(groups,stats,nosort)
 
 
     %-----------------------------------------------------
-    %Add the sig bar lines and asterisks
+    %Add the sig bar lines and asterisks 
     holdstate=ishold;
     hold on
 
     H=ones(length(groups),2); %The handles will be stored here
 
     y=ylim;
-    yd=myRange(y)*0.05; %separate sig bars vertically by 5%
+    yd=myRange(y)*0.05; %separate sig bars vertically by 5% 
 
     for ii=1:length(groups)
         thisY=findMinY(xlocs(ii,:))+yd;
@@ -198,7 +198,7 @@ function varargout=sigstar(groups,stats,nosort)
     for ii=1:length(groups)
         y=get(H(ii,1),'YData');
         y(1)=y(1)-yd;
-        y(4)=y(4)-yd;
+        y(4)=y(4)-yd;   
         set(H(ii,1),'YData',y)
     end
 
@@ -228,12 +228,12 @@ end %close sigstar
 %Internal functions
 
 function H=makeSignificanceBar(x,y,p)
-    %makeSignificanceBar produces the bar and defines how many asterisks we get for a
+    %makeSignificanceBar produces the bar and defines how many asterisks we get for a 
     %given p-value
 
 
     if p<=1E-3
-        stars='***';
+        stars='***'; 
     elseif p<=1E-2
         stars='**';
     elseif p<=0.05
@@ -243,23 +243,19 @@ function H=makeSignificanceBar(x,y,p)
     else
         stars='';
     end
-
-    stars=num2str(p,2);
-
+            
     x=repmat(x,2,1);
     y=repmat(y,4,1);
 
     H(1)=plot(x(:),y,'-k','LineWidth',1.5,'Tag','sigstar_bar');
 
     %Increase offset between line and text if we will print "n.s."
-    %instead of a star.
+    %instead of a star. 
     if ~isnan(p)
         offset=0.005;
     else
         offset=0.02;
     end
-
-    offset=.02;
 
     starY=mean(y)+myRange(ylim)*offset;
     H(2)=text(mean(x(:)),starY,stars,...
@@ -279,9 +275,9 @@ end %close makeSignificanceBar
 
 function Y=findMinY(x)
     % The significance bar needs to be plotted a reasonable distance above all the data points
-    % found over a particular range of X values. So we need to find these data and calculat the
-    % the minimum y value needed to clear all the plotted data present over this given range of
-    % x values.
+    % found over a particular range of X values. So we need to find these data and calculat the 
+    % the minimum y value needed to clear all the plotted data present over this given range of 
+    % x values. 
     %
     % This version of the function is a fix from Evan Remington
     oldXLim = get(gca,'XLim');
@@ -303,3 +299,4 @@ function rng=myRange(x)
     %replacement for stats toolbox range function
     rng = max(x) - min(x);
 end %close myRange
+
