@@ -4,15 +4,20 @@ function f = displaySubjectColors(numSubjects, colors, symbols, ids)
 
   for i = 1:numSubjects
 
-    rectangle('Position', [1 numSubjects-i 1 1], 'FaceColor', colors(i,:)); hold on;
+    %rectangle('Position', [1 numSubjects-i 1 1], 'FaceColor', colors(i,:)); hold on;
 
-    text(2.1, numSubjects-i+0.5, symbols(i), 'Color', colors(i,:));
+    text(2.1, numSubjects-i+0.5, symbols(i), 'Color', colors(i,:), 'FontSize', 15);
+    plot([2.05 2.15], [numSubjects-i+0.5 numSubjects-i+0.5], 'Color', colors(i,:)); hold on;
 
-    text(2.2, numSubjects-i+0.5, ['Subject ' num2str(ids(i))]);
+    if(ids(i) < 300)
+        text(2.2, numSubjects-i+0.5, ['Control ' num2str(ids(i))]);
+    else
+        text(2.2, numSubjects-i+0.5, ['Patient ' num2str(ids(i))]);
+    end
 
   end
 
-  xlim([1 3]);
+  xlim([2 2.4]);
 
   ylim([0 numSubjects])
 

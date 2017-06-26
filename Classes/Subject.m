@@ -9,6 +9,8 @@ classdef Subject
     numComps = 3;   % number of ISC components to work with
     ISC             % ISC values
     stimIDs         % IDs of subject's available stims
+    paperID         % ID of the subject in the paper
+    marker          % Plot marker for this subject
   end
 
   methods
@@ -82,12 +84,11 @@ classdef Subject
 
     function isc = getISC(obj, stimNumber)
       isc = [];
-
-      for i = 1:length(obj)
-        x = find(obj(i).stimIDs==stimNumber);
-        if ~isempty(x)
-          isc = cat(2, isc, mean(obj(i).ISC{x}, 2));
-        end
+      x = find(obj.stimIDs==stimNumber);
+      if ~isempty(x)
+        isc = mean(sum(obj.ISC{stimNumber}(1:obj.numComps,:), 1), 2);
+      else
+        isc = NaN;
       end
 
     end
@@ -100,7 +101,7 @@ classdef Subject
 
       for i=1:length(obj.ISC)
         if(~isempty(obj.ISC{i}))
-          values(i) = mean(sum(obj.ISC{i}(1:3,:), 1), 2);
+          values(i) = mean(sum(obj.ISC{i}(1:obj.numComps,:), 1), 2);
         else
           values(i) = NaN;
         end
@@ -141,6 +142,32 @@ classdef Subject
 %         topoplot(iscresults.a(:,i), obj(1).runs(1).chanlocs);
 %       end
 
+    end
+    
+    function obj = assignISCToRuns(obj)
+        
+        for i = 1:length(obj)
+            
+            for j = 1:size(obj(i).ISC{1}, 2)
+                
+                obj(i).runs(j).ISCFA = obj(i).ISC{1}(:, j);
+                obj(i).runs(j).ISCBA = obj(i).ISC{2}(:, j);
+                
+            end
+            
+        end
+        
+        for i = 1:length(obj)
+            
+            for j = 1:size(obj(i).ISC{3}, 2)
+                
+                obj(i).runs(j+size(obj(i).ISC{1}, 2)).ISCFP = obj(i).ISC{3}(:, j);
+                obj(i).runs(j+size(obj(i).ISC{1}, 2)).ISCBP = obj(i).ISC{4}(:, j);
+                
+            end
+            
+        end
+        
     end
 
   end

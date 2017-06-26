@@ -17,6 +17,11 @@ stimLengths     %* array of the lengths of stims presented (if stimEnd-stimStart
 stimStart       %* array of the start times of stimuli (start times should be the first sample to include)
 stimEnd         %* array of the end times of stimuli (end times should be the last sample to include)
 stimIDs         %* IDs of the stimuli, should be in same order as stimStart and stimLengths
+ISCFA
+ISCBA
+ISCFP
+ISCBP
+visit
 
 % * indicates properties that should be set manually
 
@@ -101,6 +106,22 @@ function [R fbin] = getpsd(obj, stimIndex)
     warning(['Run object ' obj.file ' does not contain stimulus #' num2str(stimIndex)]);
   end
 
+end
+
+function obj = getVisit(obj)
+    
+    for i = 1:length(obj)
+        
+        if(~isempty(strfind(obj(i).file, 'v1')))
+            obj(i).visit = 1;
+        elseif(~isempty(strfind(obj(i).file, 'v2')))
+            obj(i).visit = 2;
+        else
+            obj(i).visit = 1;
+        end
+        
+    end
+    
 end
 
 end % end methods
