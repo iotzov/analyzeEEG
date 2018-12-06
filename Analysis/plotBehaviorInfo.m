@@ -5,9 +5,11 @@ function fig = plotBehaviorInfo(data, conditionNames, colors, markers, lineType)
 %
 % Long description
 
-% data - array of size MxN, will plot M points for each of N columns
+% data           - array of size MxN, will plot M points for each of N columns
 % conditionNames - cell array of length N of condition names
-% colors - Mx3 array of colors for each row in data
+% colors         - Mx3 array of colors for each row in data
+% markers          - cell array of length M containing marker for each subject
+% lineType         - char indicating line type to connect points
     
 [M N] = size(data);
 
@@ -25,6 +27,12 @@ end
 if nargin < 2
     for i = 1:N
         conditionNames{i} = ['condition ' num2str(i)];
+    end
+end
+
+if(isempty(markers))
+    for i = 1:N
+        markers{i} = 'o';
     end
 end
 
