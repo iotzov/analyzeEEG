@@ -1,5 +1,5 @@
 function f = displaySubjectColors(numSubjects, colors, symbols, ids)
-
+  
   if(isempty(symbols))
       symbols = repmat('*',[1 numSubjects]);
   end

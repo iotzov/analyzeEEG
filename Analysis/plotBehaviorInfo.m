@@ -1,10 +1,10 @@
 function fig = plotBehaviorInfo(data, conditionNames, colors, markers, lineType)
 %plotBehaviorInfo - Description
 %
-% Syntax: fig = plotBehaviorInfo(data, [conditionNames], [colors])
+% Syntax: fig = plotBehaviorInfo(data, [conditionNames], [colors], [markers], [lineType])
 %
 % Long description
-
+%
 % data           - array of size MxN, will plot M points for each of N columns
 % conditionNames - cell array of length N of condition names
 % colors         - Mx3 array of colors for each row in data
